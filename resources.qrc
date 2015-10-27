@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/PlaceMarker" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>

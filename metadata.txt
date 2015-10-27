@@ -1,0 +1,39 @@
+# This file contains metadata for your plugin. Since 
+# version 2.0 of QGIS this is the proper way to supply 
+# information about a plugin. The old method of 
+# embedding metadata in __init__.py will 
+# is no longer supported since version 2.0.
+
+# This file should be included when you package your plugin.# Mandatory items:
+
+[general]
+name=Place Marker
+qgisMinimumVersion=2.0
+description=Place Marker offer a convenient way of setting placemarks in a vector layer
+version=0.1
+author=Jens Renken (Marum/University of Bremen)
+email=renken@marum.de
+
+about=Place Marker offer a convenient way of creating and handling placemarks in a vector layer. If necessary it extends the attribute list with the additional fields like time stamp, class, name and description.
+
+tracker=https://github.com/jrenken/qgis-PlaceMarker/issues
+repository=https://github.com/jrenken/qgis-PlaceMarker
+# End of mandatory metadata
+
+# Recommended items:
+
+# Uncomment the following line and add your changelog:
+# changelog=
+
+# Tags are comma separated with spaces allowed
+tags=feature, point, vector
+
+homepage=http://www.marum.de/Meerestechnik.html
+category=Plugins
+icon=icon.png
+# experimental flag
+experimental=True
+
+# deprecated flag (applies to the whole plugin, not just a single version)
+deprecated=False
+
