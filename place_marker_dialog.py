@@ -71,7 +71,7 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
         if button == Qt.LeftButton:
             print 'click'
             self.show()
-            self.mDateTimeEdit.setDateTime(QDateTime.currentDateTime());
+            self.mDateTimeEdit.setDateTime(QDateTime.currentDateTime().toUTC());
             geoPos = self.crsXform.transform(pos)
             self.lineEditPosition.setText(', '.join(geoPos.toDegreesMinutes(5, True, True).rsplit(',')[::-1]))
 

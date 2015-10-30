@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>PlaceMarkerDialogBase</class>
  <widget class="QDialog" name="PlaceMarkerDialogBase">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>423</width>
+    <height>290</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>Place Marker Object Attributes</string>
   </property>
@@ -110,6 +118,9 @@
      </item>
      <item row="4" column="1">
       <widget class="QComboBox" name="comboBoxCategory">
+       <property name="editable">
+        <bool>true</bool>
+       </property>
        <item>
         <property name="text">
          <string>Interesting</string>
@@ -135,7 +146,11 @@
       </widget>
      </item>
      <item row="5" column="1">
-      <widget class="QLineEdit" name="lineEditPosition"/>
+      <widget class="QLineEdit" name="lineEditPosition">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item row="6" column="0">
       <widget class="QLabel" name="label_5">

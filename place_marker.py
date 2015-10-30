@@ -65,8 +65,9 @@ class PlaceMarker:
         self.actions = []
         self.menu = self.tr(u'&Place Marker')
         # TODO: We are going to let the user set this up in a future iteration
-        self.toolbar = self.iface.addToolBar(u'PlaceMarker')
-        self.toolbar.setObjectName(u'PlaceMarker')
+#         self.toolbar = self.iface.addToolBar(u'PlaceMarker')
+#         self.toolbar.setObjectName(u'PlaceMarker')
+        self.toolbar = self.iface.vectorToolBar()
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
