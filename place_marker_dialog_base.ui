@@ -2,16 +2,11 @@
 <ui version="4.0">
  <class>PlaceMarkerDialogBase</class>
  <widget class="QDialog" name="PlaceMarkerDialogBase">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>480</width>
-    <height>310</height>
-   </rect>
-  </property>
   <property name="windowTitle">
    <string>Place Marker Object Attributes</string>
+  </property>
+  <property name="windowOpacity">
+   <double>1.000000000000000</double>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

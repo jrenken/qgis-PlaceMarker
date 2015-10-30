@@ -25,7 +25,8 @@ import os
 
 from PyQt4 import QtGui, uic
 from qgis.gui import QgsMapToolEmitPoint
-from PyQt4.QtCore import Qt, pyqtSignal, pyqtSlot, QDateTime
+from PyQt4.QtCore import Qt, pyqtSignal, pyqtSlot, QDateTime, QRect, QByteArray,\
+    QSettings
 from qgis.core import QgsPoint, QgsCoordinateTransform, QgsCoordinateReferenceSystem
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -47,11 +48,23 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
         self.crsXform.setDestCRS(QgsCoordinateReferenceSystem(4326))
         self.changeCrs()
         self.iface.mapCanvas().destinationCrsChanged.connect(self.changeCrs)
+        settings = QSettings()
+        geom = settings.value('/Windows/PlaceMarker/geometry', QByteArray())
+        print geom.isEmpty()
+        if not geom.isEmpty():
+            self.restoreGeometry(settings.value('/Windows/PlaceMarker/geometry', QByteArray()))
+        self.lastGeometry = geom
 
     def showEvent(self, event):
-        print 'show'
+        print 'show', self.frameGeometry()
         self.iface.mapCanvas().setMapTool(self.mapTool)
+        self.restoreGeometry(self.lastGeometry)
         QtGui.QDialog.showEvent(self, event)
+
+    def closeEvent(self, event):
+        settings = QSettings()
+        settings.setValue('/Windows/PlaceMarker/geometry', self.saveGeometry());
+        QtGui.QDialog.closeEvent(self, event)
 
     @pyqtSlot(QgsPoint, Qt.MouseButton)
     def mouseClicked(self, pos, button):
@@ -60,12 +73,13 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
             self.show()
             self.mDateTimeEdit.setDateTime(QDateTime.currentDateTime());
             geoPos = self.crsXform.transform(pos)
-            self.lineEditPosition.setText(', '.join(geoPos.toDegreesMinutes(4, True, True).rsplit(',')[::-1]))
+            self.lineEditPosition.setText(', '.join(geoPos.toDegreesMinutes(5, True, True).rsplit(',')[::-1]))
 
     @pyqtSlot()
     def accept(self):
-        print 'accept'
-        QtGui.QDialog.accept(self)
+        self.lastGeometry = self.saveGeometry()
+        print 'accept', self.pos
+        QtGui.QDialog.reject(self)
 
     @pyqtSlot()
     def reject(self):

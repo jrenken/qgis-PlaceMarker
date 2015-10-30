@@ -89,6 +89,7 @@ class PlaceMarker:
         icon_path,
         text,
         callback,
+        toggle_flag=False,
         enabled_flag=True,
         checkable_flag=False,
         add_to_menu=True,
@@ -107,6 +108,11 @@ class PlaceMarker:
 
         :param callback: Function to be called when the action is triggered.
         :type callback: function
+
+        :param toggle_flag: A flag indicating if the action should connect
+            the toggled or triggered signal by default.
+            Defaults to triggered (False)
+        :type toggle_flag: bool
 
         :param enabled_flag: A flag indicating if the action should be enabled
             by default. Defaults to True.
@@ -141,7 +147,10 @@ class PlaceMarker:
 
         icon = QIcon(icon_path)
         action = QAction(icon, text, parent)
-        action.triggered.connect(callback)
+        if toggle_flag:
+            action.toggled.connect(callback)
+        else:
+            action.triggered.connect(callback)
         action.setEnabled(enabled_flag)
         action.setCheckable(checkable_flag)
 
@@ -172,6 +181,7 @@ class PlaceMarker:
             text=self.tr(u'Place marker'),
             checkable_flag=True,
             callback=self.run,
+            toggle_flag=True,            
             parent=self.iface.mainWindow())
         actionGroup = self.iface.actionPan().actionGroup()
         actionGroup.addAction(self.actions[0])
@@ -185,16 +195,18 @@ class PlaceMarker:
             self.iface.removeToolBarIcon(action)
         # remove the toolbar
         del self.toolbar
+        self.dlg.close()
 
 
-    def run(self):
+    def run(self, checked=False):
         """Run method that performs all the real work"""
-        # show the dialog
-        self.dlg.show()
-        # Run the dialog event loop
-        result = self.dlg.exec_()
-        # See if OK was pressed
-        if result:
-            # Do something useful here - delete the line containing pass and
-            # substitute with your code.
-            pass
+        if checked:
+            # show the dialog
+            self.dlg.show()
+            # Run the dialog event loop
+            result = self.dlg.exec_()
+            # See if OK was pressed
+            if result:
+                pass
+        else:
+            self.dlg.close()
