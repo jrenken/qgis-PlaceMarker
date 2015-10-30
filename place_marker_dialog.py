@@ -24,18 +24,58 @@
 import os
 
 from PyQt4 import QtGui, uic
+from qgis.gui import QgsMapToolEmitPoint
+from PyQt4.QtCore import Qt, pyqtSignal, pyqtSlot, QDateTime
+from qgis.core import QgsPoint, QgsCoordinateTransform, QgsCoordinateReferenceSystem
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'place_marker_dialog_base.ui'))
 
 
 class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, parent=None):
+    
+    mouseClicked = pyqtSignal(QgsPoint, Qt.MouseButton)
+    
+    def __init__(self, iface, parent=None):
         """Constructor."""
         super(PlaceMarkerDialog, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        self.iface = iface
+        self.mapTool = QgsMapToolEmitPoint(self.iface.mapCanvas())
+        self.mapTool.canvasClicked.connect(self.mouseClicked)
+        self.crsXform = QgsCoordinateTransform()
+        self.crsXform.setDestCRS(QgsCoordinateReferenceSystem(4326))
+        self.changeCrs()
+        self.iface.mapCanvas().destinationCrsChanged.connect(self.changeCrs)
+
+    def showEvent(self, event):
+        print 'show'
+        self.iface.mapCanvas().setMapTool(self.mapTool)
+        QtGui.QDialog.showEvent(self, event)
+
+    @pyqtSlot(QgsPoint, Qt.MouseButton)
+    def mouseClicked(self, pos, button):
+        if button == Qt.LeftButton:
+            print 'click'
+            self.show()
+            self.mDateTimeEdit.setDateTime(QDateTime.currentDateTime());
+            geoPos = self.crsXform.transform(pos)
+            self.lineEditPosition.setText(', '.join(geoPos.toDegreesMinutes(4, True, True).rsplit(',')[::-1]))
+
+    @pyqtSlot()
+    def accept(self):
+        print 'accept'
+        QtGui.QDialog.accept(self)
+
+    @pyqtSlot()
+    def reject(self):
+        print 'reject'
+        QtGui.QDialog.reject(self)
+
+    @pyqtSlot()
+    def changeCrs(self):
+        '''
+        SLot called when the mapcanvas CRS is changed
+        '''
+        crsSrc = self.iface.mapCanvas().mapSettings().destinationCrs()
+        self.crsXform.setSourceCrs(crsSrc)

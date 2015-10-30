@@ -59,7 +59,7 @@ class PlaceMarker:
                 QCoreApplication.installTranslator(self.translator)
 
         # Create the dialog (after translation) and keep reference
-        self.dlg = PlaceMarkerDialog()
+        self.dlg = PlaceMarkerDialog(self.iface)
 
         # Declare instance attributes
         self.actions = []
@@ -90,6 +90,7 @@ class PlaceMarker:
         text,
         callback,
         enabled_flag=True,
+        checkable_flag=False,
         add_to_menu=True,
         add_to_toolbar=True,
         status_tip=None,
@@ -110,6 +111,10 @@ class PlaceMarker:
         :param enabled_flag: A flag indicating if the action should be enabled
             by default. Defaults to True.
         :type enabled_flag: bool
+
+        :param checkable_flag: A flag indicating if the action should be checkable
+            by default. Defaults to False.
+        :type checkable: bool
 
         :param add_to_menu: Flag indicating whether the action should also
             be added to the menu. Defaults to True.
@@ -138,6 +143,7 @@ class PlaceMarker:
         action = QAction(icon, text, parent)
         action.triggered.connect(callback)
         action.setEnabled(enabled_flag)
+        action.setCheckable(checkable_flag)
 
         if status_tip is not None:
             action.setStatusTip(status_tip)
@@ -164,9 +170,11 @@ class PlaceMarker:
         self.add_action(
             icon_path,
             text=self.tr(u'Place marker'),
+            checkable_flag=True,
             callback=self.run,
             parent=self.iface.mainWindow())
-
+        actionGroup = self.iface.actionPan().actionGroup()
+        actionGroup.addAction(self.actions[0])
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
