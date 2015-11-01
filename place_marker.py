@@ -3,7 +3,7 @@
 /***************************************************************************
  PlaceMarker
                                  A QGIS plugin
- Place Marker offer a convenient way of setting placemarks in a vector layer
+ Place Marker offers a convenient way of setting placemarks in a vector layer
                               -------------------
         begin                : 2015-10-27
         git sha              : $Format:%H$
@@ -193,9 +193,9 @@ class PlaceMarker:
             self.iface.removePluginMenu(
                 self.tr(u'&Place Marker'),
                 action)
-            self.iface.removeToolBarIcon(action)
+            self.iface.removeVectorToolBarIcon(action)
         # remove the toolbar
-        del self.toolbar
+#         del self.toolbar
         self.dlg.close()
 
 

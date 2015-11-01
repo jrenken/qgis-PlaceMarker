@@ -3,7 +3,7 @@
 /***************************************************************************
  PlaceMarkerDialog
                                  A QGIS plugin
- Place Marker offer a convenient way of setting placemarks in a vector layer
+ Place Marker offers a convenient way of setting placemarks in a vector layer
                              -------------------
         begin                : 2015-10-27
         git sha              : $Format:%H$
@@ -25,7 +25,7 @@ import os
 
 from PyQt4 import QtGui, uic
 from qgis.gui import QgsMapToolEmitPoint
-from PyQt4.QtCore import Qt, pyqtSignal, pyqtSlot, QDateTime, QRect, QByteArray,\
+from PyQt4.QtCore import Qt, pyqtSignal, pyqtSlot, QDateTime, QByteArray,\
     QSettings
 from qgis.core import QgsPoint, QgsCoordinateTransform, QgsCoordinateReferenceSystem
 
