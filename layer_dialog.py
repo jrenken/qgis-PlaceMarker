@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Created on 01.11.2015
 
@@ -25,4 +26,6 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
         super(LayerDialog, self).__init__(parent)
         self.setupUi(self)
 
+    def currentLayer(self):
+        return self.mMapLayerComboBox.currentLayer()
         

@@ -27,7 +27,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0">
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
        <item>
         <widget class="QgsMapLayerComboBox" name="mMapLayerComboBox">
          <property name="enabled">
@@ -39,41 +39,12 @@
         </widget>
        </item>
        <item>
-        <widget class="QToolButton" name="toolButtonCreateNewLayer">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
+        <widget class="QToolButton" name="toolButtonChangeLayer">
          <property name="toolTip">
           <string>Create new memory layer</string>
          </property>
          <property name="text">
           <string>...</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButtonChangeLayer">
-         <property name="text">
-          <string>Change Layer</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <property name="autoExclusive">
-          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -206,38 +177,6 @@
  </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>pushButtonChangeLayer</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>mMapLayerComboBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>386</x>
-     <y>26</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>196</x>
-     <y>17</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButtonChangeLayer</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>toolButtonCreateNewLayer</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>371</x>
-     <y>36</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>232</x>
-     <y>32</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>button_box</sender>
    <signal>rejected()</signal>

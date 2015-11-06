@@ -58,8 +58,8 @@ class PlaceMarker:
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
 
-        # Create the dialog (after translation) and keep reference
-        self.dlg = PlaceMarkerDialog(self.iface)
+        # Create the dialog (after translation) and keep reference later
+        self.dlg = None
 
         # Declare instance attributes
         self.actions = []
@@ -196,11 +196,15 @@ class PlaceMarker:
             self.iface.removeVectorToolBarIcon(action)
         # remove the toolbar
 #         del self.toolbar
-        self.dlg.close()
+        if self.dlg is not None:
+            self.dlg.close()
 
 
     def run(self, checked=False):
         """Run method that performs all the real work"""
+        if self.dlg is None:
+            self.dlg = PlaceMarkerDialog(self.iface)
+             
         if checked:
             # show the dialog
             self.dlg.show()

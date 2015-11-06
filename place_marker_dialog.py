@@ -28,6 +28,9 @@ from qgis.gui import QgsMapToolEmitPoint
 from PyQt4.QtCore import Qt, pyqtSignal, pyqtSlot, QDateTime, QByteArray,\
     QSettings
 from qgis.core import QgsPoint, QgsCoordinateTransform, QgsCoordinateReferenceSystem
+from layer_dialog import LayerDialog
+from placemark_layer import PlaceMarkLayer
+from qgis._core import QgsMapLayerRegistry
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'place_marker_dialog_base.ui'))
@@ -54,12 +57,18 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
         if not geom.isEmpty():
             self.restoreGeometry(settings.value('/Windows/PlaceMarker/geometry', QByteArray()))
         self.lastGeometry = geom
-
+        self.layerId = settings.value(u'PlaceMarker/LayerId', None)
+        try:
+            layer = QgsMapLayerRegistry.instance().mapLayer(self.layerId)
+        except KeyError:
+            self.changeLayer()
+        self.placeMarkLayer = PlaceMarkLayer(layer)
+#
     def showEvent(self, event):
-        print 'show', self.frameGeometry()
         self.iface.mapCanvas().setMapTool(self.mapTool)
         self.restoreGeometry(self.lastGeometry)
         QtGui.QDialog.showEvent(self, event)
+
 
     def closeEvent(self, event):
         settings = QSettings()
@@ -74,6 +83,7 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
             self.mDateTimeEdit.setDateTime(QDateTime.currentDateTime().toUTC());
             geoPos = self.crsXform.transform(pos)
             self.lineEditPosition.setText(', '.join(geoPos.toDegreesMinutes(5, True, True).rsplit(',')[::-1]))
+            self.checkLayer()
 
     @pyqtSlot()
     def accept(self):
@@ -93,3 +103,18 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
         '''
         crsSrc = self.iface.mapCanvas().mapSettings().destinationCrs()
         self.crsXform.setSourceCrs(crsSrc)
+
+    @pyqtSlot(name='on_toolButtonChangeLayer_clicked')
+    def changeLayer(self):
+        dlg = LayerDialog(self)
+        dlg.show()
+        result = dlg.exec_()
+        if result:
+            layer = dlg.currentLayer()
+            print layer.id()
+            self.mMapLayerComboBox.setLayer(layer)
+            settings = QSettings()
+            settings.setValue(u'PlaceMarker/LayerId', layer.id())
+
+    def checkLayer(self):
+        pass
