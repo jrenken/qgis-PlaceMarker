@@ -26,7 +26,7 @@
      <item>
       <widget class="QgsMapLayerComboBox" name="mMapLayerComboBox">
        <property name="filters">
-        <set>QgsMapLayerProxyModel::PointLayer</set>
+        <set>QgsMapLayerProxyModel::PluginLayer|QgsMapLayerProxyModel::PointLayer</set>
        </property>
       </widget>
      </item>
