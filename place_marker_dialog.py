@@ -24,13 +24,14 @@
 import os
 
 from PyQt4 import QtGui, uic
-from qgis.gui import QgsMapToolEmitPoint
+from qgis.gui import QgsMapToolEmitPoint, QgsMapTool
 from PyQt4.QtCore import Qt, pyqtSignal, pyqtSlot, QDateTime, QByteArray,\
     QSettings
 from qgis.core import QgsPoint, QgsCoordinateTransform, QgsCoordinateReferenceSystem
 from layer_dialog import LayerDialog
 from placemark_layer import PlaceMarkLayer
-from qgis._core import QgsMapLayerRegistry
+from qgis.core import QgsMapLayerRegistry
+from PyQt4.QtGui import QDialogButtonBox
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'place_marker_dialog_base.ui'))
@@ -45,12 +46,14 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
         super(PlaceMarkerDialog, self).__init__(parent)
         self.setupUi(self)
         self.iface = iface
+        self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
         self.mapTool = QgsMapToolEmitPoint(self.iface.mapCanvas())
         self.mapTool.canvasClicked.connect(self.mouseClicked)
         self.crsXform = QgsCoordinateTransform()
         self.crsXform.setDestCRS(QgsCoordinateReferenceSystem(4326))
         self.changeCrs()
         self.iface.mapCanvas().destinationCrsChanged.connect(self.changeCrs)
+        self.iface.mapCanvas().mapToolSet.connect(self.mapToolChanged)
         settings = QSettings()
         geom = settings.value('/Windows/PlaceMarker/geometry', QByteArray())
         print geom.isEmpty()
@@ -58,13 +61,17 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
             self.restoreGeometry(settings.value('/Windows/PlaceMarker/geometry', QByteArray()))
         self.lastGeometry = geom
         self.layerId = settings.value(u'PlaceMarker/LayerId', None)
-        try:
-            layer = QgsMapLayerRegistry.instance().mapLayer(self.layerId)
-        except KeyError:
+        print self.layerId
+        layer = QgsMapLayerRegistry.instance().mapLayer(self.layerId)
+        if layer is None:
+            print "Layer not found"
             self.changeLayer()
-        self.placeMarkLayer = PlaceMarkLayer(layer)
+        else:
+            self.placeMarkLayer = PlaceMarkLayer(layer)
+        
 #
     def showEvent(self, event):
+        print "Hallo PlaceMark"
         self.iface.mapCanvas().setMapTool(self.mapTool)
         self.restoreGeometry(self.lastGeometry)
         QtGui.QDialog.showEvent(self, event)
@@ -73,13 +80,18 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
     def closeEvent(self, event):
         settings = QSettings()
         settings.setValue('/Windows/PlaceMarker/geometry', self.saveGeometry());
-        QtGui.QDialog.closeEvent(self, event)
+        QtGui.QDialog.closeEvent(self, event)            
+        self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
+        self.lineEditPosition.setText(u'')
+        print 'close'
+
 
     @pyqtSlot(QgsPoint, Qt.MouseButton)
     def mouseClicked(self, pos, button):
         if button == Qt.LeftButton:
             print 'click'
             self.show()
+            self.button_box.button(QDialogButtonBox.Apply).setEnabled(True)
             self.mDateTimeEdit.setDateTime(QDateTime.currentDateTime().toUTC());
             geoPos = self.crsXform.transform(pos)
             self.lineEditPosition.setText(', '.join(geoPos.toDegreesMinutes(5, True, True).rsplit(',')[::-1]))
@@ -106,7 +118,7 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(name='on_toolButtonChangeLayer_clicked')
     def changeLayer(self):
-        dlg = LayerDialog(self)
+        dlg = LayerDialog(self.iface, self)
         dlg.show()
         result = dlg.exec_()
         if result:
@@ -116,5 +128,10 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
             settings = QSettings()
             settings.setValue(u'PlaceMarker/LayerId', layer.id())
 
+    @pyqtSlot(QgsMapTool)
+    def mapToolChanged(self, mapTool):
+        if mapTool != self.mapTool:
+            self.close()
+            
     def checkLayer(self):
         pass

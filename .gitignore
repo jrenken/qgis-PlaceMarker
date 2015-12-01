@@ -1,8 +1,10 @@
 *.pyc
 *_rc.py
+resources.py
 *~
 *.rst
 *.zip
 help/build
 .project
 .pydevproject
+.settings

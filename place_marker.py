@@ -180,12 +180,10 @@ class PlaceMarker:
         self.add_action(
             icon_path,
             text=self.tr(u'Place marker'),
-            checkable_flag=True,
             callback=self.run,
-            toggle_flag=True,            
             parent=self.iface.mainWindow())
-        actionGroup = self.iface.actionPan().actionGroup()
-        actionGroup.addAction(self.actions[0])
+#         actionGroup = self.iface.actionPan().actionGroup()
+#         actionGroup.addAction(self.actions[0])
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
@@ -200,18 +198,9 @@ class PlaceMarker:
             self.dlg.close()
 
 
-    def run(self, checked=False):
+    def run(self):
         """Run method that performs all the real work"""
         if self.dlg is None:
             self.dlg = PlaceMarkerDialog(self.iface)
-             
-        if checked:
-            # show the dialog
-            self.dlg.show()
-            # Run the dialog event loop
-            result = self.dlg.exec_()
-            # See if OK was pressed
-            if result:
-                pass
-        else:
-            self.dlg.close()
+        # show the dialog
+        self.dlg.show()

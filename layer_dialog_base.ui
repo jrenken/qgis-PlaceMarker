@@ -26,7 +26,31 @@
      <item>
       <widget class="QgsMapLayerComboBox" name="mMapLayerComboBox">
        <property name="filters">
-        <set>QgsMapLayerProxyModel::PluginLayer|QgsMapLayerProxyModel::PointLayer</set>
+        <set>QgsMapLayerProxyModel::PointLayer</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonNewLayer">
+       <property name="text">
+        <string>New Layer</string>
        </property>
       </widget>
      </item>
