@@ -31,7 +31,7 @@ from qgis.core import QgsPoint, QgsCoordinateTransform, QgsCoordinateReferenceSy
 from layer_dialog import LayerDialog
 from placemark_layer import PlaceMarkLayer
 from qgis.core import QgsMapLayerRegistry
-from PyQt4.QtGui import QDialogButtonBox
+from PyQt4.QtGui import QDialogButtonBox, QAbstractButton
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'place_marker_dialog_base.ui'))
@@ -54,6 +54,7 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
         self.changeCrs()
         self.iface.mapCanvas().destinationCrsChanged.connect(self.changeCrs)
         self.iface.mapCanvas().mapToolSet.connect(self.mapToolChanged)
+        self.pos = None
         settings = QSettings()
         geom = settings.value('/Windows/PlaceMarker/geometry', QByteArray())
         print geom.isEmpty()
@@ -91,10 +92,11 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
         if button == Qt.LeftButton:
             print 'click'
             self.show()
+            self.pos = pos
             self.button_box.button(QDialogButtonBox.Apply).setEnabled(True)
             self.mDateTimeEdit.setDateTime(QDateTime.currentDateTime().toUTC());
-            geoPos = self.crsXform.transform(pos)
-            self.lineEditPosition.setText(', '.join(geoPos.toDegreesMinutes(5, True, True).rsplit(',')[::-1]))
+            self.geoPos = self.crsXform.transform(self.pos)
+            self.lineEditPosition.setText(', '.join(self.geoPos.toDegreesMinutes(5, True, True).rsplit(',')[::-1]))
             self.checkLayer()
 
     @pyqtSlot()
@@ -132,6 +134,20 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
     def mapToolChanged(self, mapTool):
         if mapTool != self.mapTool:
             self.close()
+
+    @pyqtSlot(QAbstractButton, name='on_button_box_clicked')
+    def applyNewPlacemark(self, button):
+        print self.button_box.buttonRole(button)
+        if self.button_box.buttonRole(button) == QDialogButtonBox.ApplyRole:
+            if self.pos is not None:
+                res = self.placeMarkLayer.addPlaceMark(self.geoPos, 
+                                                 self.lineEditName.text(), 
+                                                 self.lineEditDescription.text(), 
+                                                 self.comboBoxCategory.currentText(), 
+                                                 self.mDateTimeEdit.dateTime().toString())
+                if res:
+                    print 'Refresh'
+                    self.iface.mapCanvas().refresh()
             
     def checkLayer(self):
         pass

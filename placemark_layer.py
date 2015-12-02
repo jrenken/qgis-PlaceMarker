@@ -5,7 +5,7 @@ Created on 01.11.2015
 @author: jrenken
 '''
 from PyQt4.QtCore import pyqtSlot, QVariant
-from qgis._core import QgsVectorDataProvider, QgsField
+from qgis._core import QgsVectorDataProvider, QgsField, QgsGeometry, QgsFeature
 
 
 REQUIRED_FIELDS = [['name', QVariant.String],
@@ -34,15 +34,17 @@ class PlaceMarkLayer:
         ''' assign a layer. Before check if the requirements are fulffilled
         :param layer: a vector layer
         '''
-        layerOk, missing = checkLayer(layer)
-        if layerOk:
-            if self.addMissingFields(layer):
-                self.layer = layer;
-                layer.layerDeleted.connect(self.layerDeleted)
-                self.hasLayer = True
-                return
         self.layer = None
         self.hasLayer = False
+        layerOk, missing = checkLayer(layer)
+        if layerOk:
+            if missing:
+                if not self.addMissingFields(layer, missing):
+                    return 
+            self.layer = layer;
+            layer.layerDeleted.connect(self.layerDeleted)
+            self.hasLayer = True
+                
 
     def addPlaceMark(self, pos, name, description, category, timestamp):
         ''' adds a point to the layer
@@ -63,16 +65,35 @@ class PlaceMarkLayer:
         :type timestamp: string
         '''
         if self.hasLayer:
-            pass
-        
+            feat = QgsFeature(self.layer.pendingFields())
+            feat.setAttribute('name', name)
+            feat.setAttribute('descr', description)
+            lat, lon = "{:.6f}".format(pos.y()), "{:.6f}".format(pos.x())
+            feat.setAttribute('lat', lat)
+            feat.setAttribute('lon', lon)
+            feat.setAttribute('class', category)
+            feat.setAttribute('timestamp', timestamp)
+            feat.setGeometry(QgsGeometry.fromPoint(pos))
+            (res, outFeats) = self.layer.dataProvider().addFeatures([feat])
+            print res, outFeats
+            return res
+            
     @pyqtSlot()
     def layerDeleted(self):
         self.layer = None
         self.hasLayer = False
  
-    def addMissingFields(self, layer):
-        print "addMissingFields"
-        pass
+    def addMissingFields(self, layer, missingFields):
+        if not missingFields:
+            return True
+        if layer.dataProvider().capabilities() & QgsVectorDataProvider.AddAttributes: 
+            res = layer.dataProvider().addAttributes(missingFields)
+            if res:
+                layer.updateFields()
+        print "addMissingFields", missingFields,res
+        for f in missingFields:
+            print f.name()
+        return res
 
 def checkLayer(layer):
     ''' Check if the layer geometry is point and if the 
@@ -92,7 +113,7 @@ def checkLayer(layer):
         return True, []
     
     caps = layer.dataProvider().capabilities()
-    reqCaps = (QgsVectorDataProvider.AddFeatures | QgsVectorDataProvider.DeleteFeatures) 
+    reqCaps = (QgsVectorDataProvider.AddFeatures | QgsVectorDataProvider.DeleteFeatures | QgsVectorDataProvider.AddAttributes) 
     if (caps & reqCaps) == reqCaps:
         return True, missingFields
     return False, missingFields
