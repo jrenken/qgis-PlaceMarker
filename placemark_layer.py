@@ -38,6 +38,7 @@ class PlaceMarkLayer:
         self.hasLayer = False
         layerOk, missing = checkLayer(layer)
         if layerOk:
+            print "Layer ok:", layer.name()
             if missing:
                 if not self.addMissingFields(layer, missing):
                     return 
@@ -77,6 +78,7 @@ class PlaceMarkLayer:
             (res, outFeats) = self.layer.dataProvider().addFeatures([feat])
             print res, outFeats
             return res
+        return False
             
     @pyqtSlot()
     def layerDeleted(self):

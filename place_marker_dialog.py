@@ -54,6 +54,7 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
         self.changeCrs()
         self.iface.mapCanvas().destinationCrsChanged.connect(self.changeCrs)
         self.iface.mapCanvas().mapToolSet.connect(self.mapToolChanged)
+        self.placeMarkLayer = None
         self.pos = None
         settings = QSettings()
         geom = settings.value('/Windows/PlaceMarker/geometry', QByteArray())
