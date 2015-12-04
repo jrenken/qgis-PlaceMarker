@@ -30,9 +30,6 @@
       <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
        <item>
         <widget class="QgsMapLayerComboBox" name="mMapLayerComboBox">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
          <property name="filters">
           <set>QgsMapLayerProxyModel::PointLayer</set>
          </property>
