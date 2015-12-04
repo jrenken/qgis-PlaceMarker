@@ -8,12 +8,11 @@ from PyQt4.QtCore import pyqtSlot, QVariant
 from qgis._core import QgsVectorDataProvider, QgsField, QgsGeometry, QgsFeature
 
 
-REQUIRED_FIELDS = [['name', QVariant.String],
-                   ['descr', QVariant.String],
+REQUIRED_FIELDS = [['pkuid', QVariant.Int],
+                   ['name', QVariant.String],
+                   ['description', QVariant.String],
                    ['class', QVariant.String],
-                   ['timestamp', QVariant.String],
-                   ['lat', QVariant.Double],
-                   ['lon', QVariant.Double]]
+                   ['timestamp', QVariant.String]]
 
 
 class PlaceMarkLayer:
@@ -36,12 +35,9 @@ class PlaceMarkLayer:
         '''
         self.layer = None
         self.hasLayer = False
-        layerOk, missing = checkLayer(layer)
+        layerOk = checkLayer(layer)
         if layerOk:
             print "Layer ok:", layer.name()
-            if missing:
-                if not self.addMissingFields(layer, missing):
-                    return 
             self.layer = layer;
             layer.layerDeleted.connect(self.layerDeleted)
             self.hasLayer = True
@@ -68,10 +64,7 @@ class PlaceMarkLayer:
         if self.hasLayer:
             feat = QgsFeature(self.layer.pendingFields())
             feat.setAttribute('name', name)
-            feat.setAttribute('descr', description)
-            lat, lon = "{:.6f}".format(pos.y()), "{:.6f}".format(pos.x())
-            feat.setAttribute('lat', lat)
-            feat.setAttribute('lon', lon)
+            feat.setAttribute('description', description)
             feat.setAttribute('class', category)
             feat.setAttribute('timestamp', timestamp)
             feat.setGeometry(QgsGeometry.fromPoint(pos))
@@ -104,18 +97,20 @@ def checkLayer(layer):
     :type layer: QgsVectorLayer
     '''
     if layer is None:
-        return False, None
+        return False
     missingFields = []
     for fieldspec in REQUIRED_FIELDS:
         try:
             layer.fields().field(fieldspec[0])
         except KeyError:
             missingFields.append(QgsField (fieldspec[0], fieldspec[1]))
-    if not missingFields:
-        return True, []
+    print missingFields
+    if missingFields:
+        print 'False'
+        return False
     
     caps = layer.dataProvider().capabilities()
-    reqCaps = (QgsVectorDataProvider.AddFeatures | QgsVectorDataProvider.DeleteFeatures | QgsVectorDataProvider.AddAttributes) 
+    reqCaps = (QgsVectorDataProvider.AddFeatures | QgsVectorDataProvider.DeleteFeatures) 
     if (caps & reqCaps) == reqCaps:
-        return True, missingFields
-    return False, missingFields
+        return True
+    return False

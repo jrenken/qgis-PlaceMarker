@@ -93,7 +93,7 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
         '''
         sql = u'create table ' + self.quotedIdentifier(self.leLayerName.text()) + '('
         sql += u'pkuid integer primary key autoincrement,'
-        sql += u'name text,description text,class text, datetime text)'
+        sql += u'name text,description text,class text, timestamp text)'
         print sql
 
         sqlGeom = u'select AddGeometryColumn(%s,%s,%d,%s,2)' % (self.quotedValue(self.leLayerName.text()),
