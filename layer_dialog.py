@@ -122,12 +122,13 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
         table = self.leLayerName.text()
         geom_column = 'Geometry'
         uri.setDataSource(schema, table, geom_column)
-        display_name = 'Towns'
+        display_name = self.leLayerName.text()
         layer = QgsVectorLayer(uri.uri(), display_name, 'spatialite')
         
         if layer.isValid():
-            QgsMapLayerRegistry.instance().addMapLayers([layer])
-            
+            print 'Layer valid'
+            QgsMapLayerRegistry.instance().addMapLayer(layer)
+#             self.iface.addVectorLayer(layer)
         db.close()
         
         
