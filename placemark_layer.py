@@ -1,9 +1,25 @@
 # -*- coding: utf-8 -*-
-'''
-Created on 01.11.2015
+"""
+/***************************************************************************
+ PlaceMarkerLayer
+                                 A QGIS plugin
+ Place Marker offers a convenient way of setting placemarks in a vector layer
+                              -------------------
+        begin                : 2015-11-01
+        git sha              : $Format:%H$
+        copyright            : (C) 2015 by Jens Renken (Marum/University of Bremen)
+        email                : renken@marum.de
+ ***************************************************************************/
 
-@author: jrenken
-'''
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+"""
 from PyQt4.QtCore import pyqtSlot, QVariant
 from qgis._core import QgsVectorDataProvider, QgsField, QgsGeometry, QgsFeature
 
@@ -19,6 +35,12 @@ class PlaceMarkLayer:
     '''
     classdocs
     '''
+    
+    REQUIRED_FIELDS = [['pkuid', QVariant.Int],
+                       ['name', QVariant.String],
+                       ['description', QVariant.String],
+                       ['class', QVariant.String],
+                       ['timestamp', QVariant.String]]
 
     def __init__(self, layer=None):
         '''
@@ -35,13 +57,12 @@ class PlaceMarkLayer:
         '''
         self.layer = None
         self.hasLayer = False
-        layerOk = checkLayer(layer)
+        layerOk = self.checkLayer(layer)
         if layerOk:
             print "Layer ok:", layer.name()
             self.layer = layer;
             layer.layerDeleted.connect(self.layerDeleted)
-            self.hasLayer = True
-                
+            self.hasLayer = True        
 
     def addPlaceMark(self, pos, name, description, category, timestamp):
         ''' adds a point to the layer
@@ -68,8 +89,9 @@ class PlaceMarkLayer:
             feat.setAttribute('class', category)
             feat.setAttribute('timestamp', timestamp)
             feat.setGeometry(QgsGeometry.fromPoint(pos))
-            (res, outFeats) = self.layer.dataProvider().addFeatures([feat])
-            print res, outFeats
+            (res, _) = self.layer.dataProvider().addFeatures([feat])
+            if res:
+                self.layer.commitChanges() 
             return res
         return False
             
@@ -85,32 +107,29 @@ class PlaceMarkLayer:
             res = layer.dataProvider().addAttributes(missingFields)
             if res:
                 layer.updateFields()
-        print "addMissingFields", missingFields,res
-        for f in missingFields:
-            print f.name()
+        print "addMissingFields", missingFields, res
         return res
 
-def checkLayer(layer):
-    ''' Check if the layer geometry is point and if the 
-        required attributes are available or can be added
-    :param layer: vector layer where to add the placemarks
-    :type layer: QgsVectorLayer
-    '''
-    if layer is None:
+    def checkLayer(self, layer):
+        ''' Check if the layer geometry is point and if the 
+            required attributes are available or can be added
+        :param layer: vector layer where to add the placemarks
+        :type layer: QgsVectorLayer
+        '''
+        if layer is None:
+            return False
+        missingFields = []
+        for fieldspec in self.REQUIRED_FIELDS:
+            try:
+                layer.fields().field(fieldspec[0])
+            except KeyError:
+                missingFields.append(QgsField (fieldspec[0], fieldspec[1]))
+        if missingFields:
+            print 'fields missing: ', layer.name()
+            return False
+        
+        caps = layer.dataProvider().capabilities()
+        reqCaps = (QgsVectorDataProvider.AddFeatures | QgsVectorDataProvider.DeleteFeatures) 
+        if (caps & reqCaps) == reqCaps:
+            return True
         return False
-    missingFields = []
-    for fieldspec in REQUIRED_FIELDS:
-        try:
-            layer.fields().field(fieldspec[0])
-        except KeyError:
-            missingFields.append(QgsField (fieldspec[0], fieldspec[1]))
-    print missingFields
-    if missingFields:
-        print 'False'
-        return False
-    
-    caps = layer.dataProvider().capabilities()
-    reqCaps = (QgsVectorDataProvider.AddFeatures | QgsVectorDataProvider.DeleteFeatures) 
-    if (caps & reqCaps) == reqCaps:
-        return True
-    return False

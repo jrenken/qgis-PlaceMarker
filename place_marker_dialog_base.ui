@@ -132,6 +132,9 @@
        <property name="displayFormat">
         <string>dd.MM.yy   HH:mm:ss</string>
        </property>
+       <property name="calendarPopup">
+        <bool>true</bool>
+       </property>
        <property name="currentSectionIndex">
         <number>4</number>
        </property>
@@ -144,7 +147,11 @@
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="QLineEdit" name="lineEditName"/>
+      <widget class="QLineEdit" name="lineEditName">
+       <property name="dragEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

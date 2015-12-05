@@ -1,17 +1,32 @@
 # -*- coding: utf-8 -*-
-'''
-Created on 01.11.2015
+"""
+/***************************************************************************
+ LayerDialog
+                                 A QGIS plugin
+ Place Marker offers a convenient way of setting placemarks in a vector layer
+                              -------------------
+        begin                : 2015-10-27
+        git sha              : $Format:%H$
+        copyright            : (C) 2015 by Jens Renken (Marum/University of Bremen)
+        email                : renken@marum.de
+ ***************************************************************************/
 
-@author: jrenken
-'''
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+"""
 
 import os
 
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, QSettings, QFile, QLibrary, QFileInfo
-from PyQt4.QtGui import QDialogButtonBox, QFileDialog, QMessageBox, QSizePolicy
-from qgis._core import QgsProviderRegistry, QgsDataSourceURI, QgsVectorLayer,\
-    QgsMapLayerRegistry
+from PyQt4.QtCore import pyqtSlot, QSettings, QFileInfo
+from PyQt4.QtGui import QDialogButtonBox, QFileDialog, QSizePolicy
+from qgis._core import QgsDataSourceURI, QgsVectorLayer, QgsMapLayerRegistry
 from pyspatialite import dbapi2 as sqlite
 from qgis._gui import QgsMessageBar
 

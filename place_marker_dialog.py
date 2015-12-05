@@ -29,7 +29,7 @@ from PyQt4.QtCore import Qt, pyqtSignal, pyqtSlot, QDateTime, QByteArray,\
     QSettings
 from qgis.core import QgsPoint, QgsCoordinateTransform, QgsCoordinateReferenceSystem
 from layer_dialog import LayerDialog
-from placemark_layer import PlaceMarkLayer, checkLayer
+from placemark_layer import PlaceMarkLayer
 from qgis.core import QgsMapLayerRegistry
 from PyQt4.QtGui import QDialogButtonBox, QAbstractButton
 from __builtin__ import int
@@ -57,15 +57,7 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
         self.iface.mapCanvas().mapToolSet[QgsMapTool, QgsMapTool].connect(self.mapToolChanged)
         self.pos = None
         self.layerId = None
-#         self.exceptLayers()
-#         settings = QSettings()
-#         self.layerId = settings.value(u'PlaceMarker/LayerId', None)
-#         self.exceptLayers()
-#         print '__init: ', self.mMapLayerComboBox.count(), self.layerId
-#         layer = QgsMapLayerRegistry.instance().mapLayer(self.layerId)
-#         if not layer:
-#             print 'No layer'
-#             layer = self.mMapLayerComboBox.currentLayer()
+        self.layerChanged = False
         self.placeMarkLayer = PlaceMarkLayer()
         
     def showEvent(self, event):
@@ -91,7 +83,6 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
         self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
         self.lineEditPosition.setText(u'')
         print 'close'
-
 
     @pyqtSlot(QgsPoint, Qt.MouseButton)
     def mouseClicked(self, pos, button):
@@ -127,30 +118,22 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
         dlg = LayerDialog(self.iface, self)
         dlg.show()
         dlg.exec_()
-#         if result:
-#             layer = dlg.currentLayer()
-#             print layer.id()
-#             self.mMapLayerComboBox.setLayer(layer)
-#             settings = QSettings()
-#             settings.setValue(u'PlaceMarker/LayerId', layer.id())
 
     @pyqtSlot(int, name='on_mMapLayerComboBox_currentIndexChanged')
     def changeLayer(self, idx):
         print "change Layer", idx
         layer = self.mMapLayerComboBox.currentLayer()
         self.placeMarkLayer.setLayer(layer)
+        self.layerChanged = True
 
     @pyqtSlot(QgsMapTool, QgsMapTool)
     def mapToolChanged(self, mapToolNew, mapToolOld):
-        if mapToolNew != self.mapTool:
-            self.close()
-#         if mapToolOld == self.mapTool:
+        if mapToolOld == self.mapTool and mapToolNew != self.mapTool:
             print 'mapToolChanged'
             self.close()
 
     @pyqtSlot(QAbstractButton, name='on_button_box_clicked')
     def applyNewPlacemark(self, button):
-        print self.button_box.buttonRole(button)
         if self.button_box.buttonRole(button) == QDialogButtonBox.ApplyRole:
             if self.pos is not None:
                 res = self.placeMarkLayer.addPlaceMark(self.geoPos, 
@@ -161,16 +144,18 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
                 if res:
                     print 'Refresh'
                     self.iface.mapCanvas().refresh()
-            if self.placeMarkLayer.layer:
+            if self.layerChanged and self.placeMarkLayer.layer:
                 settings = QSettings()
                 settings.setValue(u'PlaceMarker/LayerId', self.placeMarkLayer.layer.id())
+            self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
+
 
     def exceptLayers(self):
         print 'exceptLayers'
         excepted = []
         for i in range(self.mMapLayerComboBox.count()):
             l = self.mMapLayerComboBox.layer(i)
-            if not checkLayer(l):
+            if not self.placeMarkLayer.checkLayer(l):
                 excepted.append(l)
                 print "Except", l.name()
         self.mMapLayerComboBox.setExceptedLayerList(self.mMapLayerComboBox.exceptedLayerList() + excepted)
