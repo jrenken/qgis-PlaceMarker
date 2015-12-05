@@ -20,7 +20,7 @@ class PlaceMarkLayer:
     classdocs
     '''
 
-    def __init__(self, layer):
+    def __init__(self, layer=None):
         '''
         Constructor
 

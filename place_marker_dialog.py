@@ -54,21 +54,32 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
         self.crsXform.setDestCRS(QgsCoordinateReferenceSystem(4326))
         self.changeCrs()
         self.iface.mapCanvas().destinationCrsChanged.connect(self.changeCrs)
-        self.iface.mapCanvas().mapToolSet.connect(self.mapToolChanged)
+        self.iface.mapCanvas().mapToolSet[QgsMapTool, QgsMapTool].connect(self.mapToolChanged)
         self.pos = None
-        settings = QSettings()
-        self.layerId = settings.value(u'PlaceMarker/LayerId', None)
-        self.exceptLayers()
-        print self.layerId
-        layer = QgsMapLayerRegistry.instance().mapLayer(self.layerId)
-        if not layer:
-            layer = self.mMapLayerComboBox.currentLayer()
-        self.placeMarkLayer = PlaceMarkLayer(layer)
+        self.layerId = None
+#         self.exceptLayers()
+#         settings = QSettings()
+#         self.layerId = settings.value(u'PlaceMarker/LayerId', None)
+#         self.exceptLayers()
+#         print '__init: ', self.mMapLayerComboBox.count(), self.layerId
+#         layer = QgsMapLayerRegistry.instance().mapLayer(self.layerId)
+#         if not layer:
+#             print 'No layer'
+#             layer = self.mMapLayerComboBox.currentLayer()
+        self.placeMarkLayer = PlaceMarkLayer()
         
     def showEvent(self, event):
-        print "Hallo PlaceMark"
+        self.exceptLayers()
         settings = QSettings()
         self.restoreGeometry(settings.value('/Windows/PlaceMarker/geometry', QByteArray()))
+        self.layerId = settings.value(u'PlaceMarker/LayerId', None)
+        print "Hallo PlaceMark", self.layerId
+        layer = QgsMapLayerRegistry.instance().mapLayer(self.layerId)
+        if layer:
+            self.mMapLayerComboBox.setLayer(layer)
+        layer = self.mMapLayerComboBox.currentLayer()
+        if layer:
+            self.placeMarkLayer.setLayer(layer)
         self.iface.mapCanvas().setMapTool(self.mapTool)
         QtGui.QDialog.showEvent(self, event)
 
@@ -95,7 +106,6 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot()
     def accept(self):
-        self.lastGeometry = self.saveGeometry()
         print 'accept', self.pos
         QtGui.QDialog.reject(self)
 
@@ -126,16 +136,16 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(int, name='on_mMapLayerComboBox_currentIndexChanged')
     def changeLayer(self, idx):
-        print "change Layer", int
+        print "change Layer", idx
         layer = self.mMapLayerComboBox.currentLayer()
-        if layer:
-            settings = QSettings()
-            settings.setValue(u'PlaceMarker/LayerId', layer.id())
-            self.placeMarkLayer.setLayer(layer)
+        self.placeMarkLayer.setLayer(layer)
 
-    @pyqtSlot(QgsMapTool)
-    def mapToolChanged(self, mapTool):
-        if mapTool != self.mapTool:
+    @pyqtSlot(QgsMapTool, QgsMapTool)
+    def mapToolChanged(self, mapToolNew, mapToolOld):
+        if mapToolNew != self.mapTool:
+            self.close()
+#         if mapToolOld == self.mapTool:
+            print 'mapToolChanged'
             self.close()
 
     @pyqtSlot(QAbstractButton, name='on_button_box_clicked')
@@ -151,7 +161,10 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
                 if res:
                     print 'Refresh'
                     self.iface.mapCanvas().refresh()
-            
+            if self.placeMarkLayer.layer:
+                settings = QSettings()
+                settings.setValue(u'PlaceMarker/LayerId', self.placeMarkLayer.layer.id())
+
     def exceptLayers(self):
         print 'exceptLayers'
         excepted = []
@@ -160,7 +173,4 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
             if not checkLayer(l):
                 excepted.append(l)
                 print "Except", l.name()
-        self.mMapLayerComboBox.setExceptedLayerList(excepted)
-
-    def checkLayer(self):
-        pass
+        self.mMapLayerComboBox.setExceptedLayerList(self.mMapLayerComboBox.exceptedLayerList() + excepted)
