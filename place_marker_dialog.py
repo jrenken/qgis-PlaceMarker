@@ -139,8 +139,8 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
                 res = self.placeMarkLayer.addPlaceMark(self.geoPos, 
                                                  self.lineEditName.text(), 
                                                  self.lineEditDescription.text(), 
-                                                 self.comboBoxCategory.currentText(), 
-                                                 self.mDateTimeEdit.dateTime().toString())
+                                                 self.comboBoxClass.currentText(), 
+                                                 self.mDateTimeEdit.dateTime().toString(self.mDateTimeEdit.displayFormat()))
                 if res:
                     print 'Refresh'
                     self.iface.mapCanvas().refresh()

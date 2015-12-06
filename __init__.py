@@ -3,7 +3,7 @@
 /***************************************************************************
  PlaceMarker
                                  A QGIS plugin
- Place Marker offer a convenient way of setting placemarks in a vector layer
+ Place Marker offers a convenient way of setting placemarks in a vector layer
                              -------------------
         begin                : 2015-10-27
         copyright            : (C) 2015 by Jens Renken (Marum/University of Bremen)
