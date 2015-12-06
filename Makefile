@@ -1,7 +1,7 @@
 #/***************************************************************************
 # PlaceMarker
 #
-# Place Marker offer a convenient way of setting placemarks in a vector layer
+# Place Marker offers a convenient way of setting placemarks in a vector layer
 #							 -------------------
 #		begin				: 2015-10-27
 #		git sha				: $Format:%H$
@@ -26,12 +26,12 @@
 #Add iso code for any locales you want to support here (space separated)
 # default is no locales
 # LOCALES = af
-LOCALES =
+LOCALES = de
 
 # If locales are enabled, set the name of the lrelease binary on your system. If
 # you have trouble compiling the translations, you may have to specify the full path to
 # lrelease
-#LRELEASE = lrelease
+LRELEASE = lrelease
 #LRELEASE = lrelease-qt4
 
 
@@ -44,9 +44,13 @@ PLUGINNAME = PlaceMarker
 
 PY_FILES = \
 	__init__.py \
-	place_marker.py place_marker_dialog.py
+	place_marker.py \
+	place_marker_dialog.py \
+	layer_dialog.py \
+	placemark_layer.py
 
-UI_FILES = place_marker_dialog_base.ui
+UI_FILES = place_marker_dialog_base.ui \
+	layer_dialog_base.ui
 
 EXTRAS = metadata.txt icon.png
 
@@ -95,7 +99,7 @@ test: compile transcompile
 	@echo "e.g. source run-env-linux.sh <path to qgis install>; make test"
 	@echo "----------------------"
 
-deploy: compile doc transcompile
+deploy: compile transcompile #doc
 	@echo
 	@echo "------------------------------------------"
 	@echo "Deploying plugin to your .qgis2 directory."
@@ -109,7 +113,7 @@ deploy: compile doc transcompile
 	cp -vf $(COMPILED_RESOURCE_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 	cp -vf $(EXTRAS) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 	cp -vfr i18n $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vfr $(HELP) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/help
+#	cp -vfr $(HELP) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/help
 
 # The dclean target removes compiled python files from plugin directory
 # also deletes any .git entry

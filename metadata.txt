@@ -8,13 +8,14 @@
 
 [general]
 name=Place Marker
-qgisMinimumVersion=2.0
-description=Place Marker offer a convenient way of setting placemarks in a vector layer
+qgisMinimumVersion=2.6
+description=Place Marker offers a convenient way of setting placemarks on a vector layer
 version=0.1
 author=Jens Renken (Marum/University of Bremen)
 email=renken@marum.de
 
-about=Place Marker offer a convenient way of creating and handling placemarks in a vector layer. If necessary it extends the attribute list with the additional fields like time stamp, class, name and description.
+about=Place Marker offers a convenient way of creating and handling placemarks in a vector layer.
+    To support sharing placemarks over different instances of QGis cyclic reloding of the layer is supported.
 
 tracker=https://github.com/jrenken/qgis-PlaceMarker/issues
 repository=https://github.com/jrenken/qgis-PlaceMarker
@@ -23,7 +24,8 @@ repository=https://github.com/jrenken/qgis-PlaceMarker
 # Recommended items:
 
 # Uncomment the following line and add your changelog:
-# changelog=
+changelog=0.1.0 (2015-12-07)
+    - first experimental release
 
 # Tags are comma separated with spaces allowed
 tags=feature, point, vector
