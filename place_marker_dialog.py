@@ -39,9 +39,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 
 class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
-    
+
     mouseClicked = pyqtSignal(QgsPoint, Qt.MouseButton)
-    
+
     def __init__(self, iface, parent=None):
         """Constructor."""
         super(PlaceMarkerDialog, self).__init__(parent)
@@ -56,14 +56,18 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
         self.iface.mapCanvas().destinationCrsChanged.connect(self.changeCrs)
         self.iface.mapCanvas().mapToolSet[QgsMapTool, QgsMapTool].connect(self.mapToolChanged)
         self.pos = None
+        self.geom = None
         self.layerId = None
         self.layerChanged = False
         self.placeMarkLayer = PlaceMarkLayer()
-        
+
     def showEvent(self, event):
         self.exceptLayers()
         settings = QSettings()
-        self.restoreGeometry(settings.value('/Windows/PlaceMarker/geometry', QByteArray()))
+        if self.geom:
+            self.restoreGeometry(self.geom)
+        else:
+            self.restoreGeometry(settings.value('/Windows/PlaceMarker/geometry', QByteArray()))
         self.layerId = settings.value(u'PlaceMarker/LayerId', None)
         print "Hallo PlaceMark", self.layerId
         layer = QgsMapLayerRegistry.instance().mapLayer(self.layerId)
@@ -75,11 +79,10 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
         self.iface.mapCanvas().setMapTool(self.mapTool)
         QtGui.QDialog.showEvent(self, event)
 
-
     def closeEvent(self, event):
         settings = QSettings()
         settings.setValue('/Windows/PlaceMarker/geometry', self.saveGeometry());
-        QtGui.QDialog.closeEvent(self, event)            
+        QtGui.QDialog.closeEvent(self, event)
         self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
         self.lineEditPosition.setText(u'')
         print 'close'
@@ -91,7 +94,7 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
             self.show()
             self.pos = pos
             self.button_box.button(QDialogButtonBox.Apply).setEnabled(True)
-            self.mDateTimeEdit.setDateTime(QDateTime.currentDateTime().toUTC());
+            self.mDateTimeEdit.setDateTime(QDateTime.currentDateTime().toUTC())
             self.geoPos = self.crsXform.transform(self.pos)
             self.lineEditPosition.setText(', '.join(self.geoPos.toDegreesMinutes(5, True, True).rsplit(',')[::-1]))
 
@@ -103,6 +106,7 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot()
     def reject(self):
         print 'reject'
+        self.geom = self.saveGeometry()
         QtGui.QDialog.reject(self)
 
     @pyqtSlot()
@@ -136,10 +140,10 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
     def applyNewPlacemark(self, button):
         if self.button_box.buttonRole(button) == QDialogButtonBox.ApplyRole:
             if self.pos is not None:
-                res = self.placeMarkLayer.addPlaceMark(self.geoPos, 
-                                                 self.lineEditName.text(), 
-                                                 self.lineEditDescription.text(), 
-                                                 self.comboBoxClass.currentText(), 
+                res = self.placeMarkLayer.addPlaceMark(self.geoPos,
+                                                 self.lineEditName.text(),
+                                                 self.lineEditDescription.text(),
+                                                 self.comboBoxClass.currentText(),
                                                  self.mDateTimeEdit.dateTime().toString(self.mDateTimeEdit.displayFormat()))
                 if res:
                     print 'Refresh'
@@ -148,7 +152,6 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
                 settings = QSettings()
                 settings.setValue(u'PlaceMarker/LayerId', self.placeMarkLayer.layer.id())
             self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
-
 
     def exceptLayers(self):
         print 'exceptLayers'
@@ -159,3 +162,8 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
                 excepted.append(l)
                 print "Except", l.name()
         self.mMapLayerComboBox.setExceptedLayerList(self.mMapLayerComboBox.exceptedLayerList() + excepted)
+
+    @pyqtSlot()
+    def refreshLayer(self, what):
+        print "Layer data changed", what
+        self.iface.mapCanvas().refresh()

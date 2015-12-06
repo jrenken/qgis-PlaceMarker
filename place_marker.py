@@ -84,7 +84,6 @@ class PlaceMarker:
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('PlaceMarker', message)
 
-
     def add_action(
         self,
         icon_path,
@@ -182,8 +181,6 @@ class PlaceMarker:
             text=self.tr(u'Place marker'),
             callback=self.run,
             parent=self.iface.mainWindow())
-#         actionGroup = self.iface.actionPan().actionGroup()
-#         actionGroup.addAction(self.actions[0])
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
@@ -192,15 +189,8 @@ class PlaceMarker:
                 self.tr(u'&Place Marker'),
                 action)
             self.iface.removeVectorToolBarIcon(action)
-        # remove the toolbar
-#         del self.toolbar
-#         if self.dlg is not None:
         self.dlg.close()
-
 
     def run(self):
         """Run method that performs all the real work"""
-#         if self.dlg is None:
-#             self.dlg = PlaceMarkerDialog(self.iface)
-        # show the dialog
         self.dlg.show()

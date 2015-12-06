@@ -39,7 +39,6 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
     classdocs
     '''
 
-
     def __init__(self, iface, parent=None):
         '''
         Constructor
@@ -47,11 +46,11 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
         super(LayerDialog, self).__init__(parent)
         self.setupUi(self)
         self.bar = QgsMessageBar(self)
-        self.bar.setSizePolicy( QSizePolicy.Minimum, QSizePolicy.Fixed )
+        self.bar.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
         self.layout().addWidget(self.bar)
         self.iface = iface
         settings = QSettings()
-        settings.beginGroup( '/SpatiaLite/connections' )
+        settings.beginGroup('/SpatiaLite/connections')
         self.mDatabaseComboBox.clear()
         for k in settings.childGroups():
             text = settings.value(k + '/sqlitepath', '###unknown###')
@@ -61,13 +60,13 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot(name='on_toolButtonNewDatabase_clicked')
     def newDataBase(self):
-        fileName = QFileDialog.getSaveFileName(self, self.tr('New SpatiaLite Database File'), '.', 
+        fileName = QFileDialog.getSaveFileName(self, self.tr('New SpatiaLite Database File'), '.',
                                                self.tr('SpatiaLite') + '(*.sqlite *.db)')
         if not fileName:
-            return;
+            return
 
         if not fileName.lower().endswith('.sqlite') and not fileName.lower().endswith('.db'):
-            fileName += ".sqlite";
+            fileName += ".sqlite"
 
         if self.createDb(fileName):
             self.mDatabaseComboBox.insertItem(0, fileName)
@@ -79,7 +78,7 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
         print 'create db', fileName
         db = sqlite.connect(fileName)
         cur = db.cursor()
-        
+
         try:
             db.enable_load_extension(True)
         except:
@@ -99,9 +98,9 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
         if not settings.contains(key):
             settings.setValue('/SpatiaLite/connections/selected', fi.fileName() + self.tr('@') + fi.canonicalFilePath())
             settings.setValue(key, fi.canonicalFilePath())
-            self.bar.pushMessage(self.tr("SpatiaLite Database"), self.tr( "Registered new database!" ),
+            self.bar.pushMessage(self.tr("SpatiaLite Database"), self.tr("Registered new database!"),
                                  level=QgsMessageBar.INFO)
-        return True;
+        return True
 
     def createLayer(self):
         '''
@@ -112,8 +111,8 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
         print sql
 
         sqlGeom = u'select AddGeometryColumn(%s,%s,%d,%s,2)' % (self.quotedValue(self.leLayerName.text()),
-                                                                self.quotedValue('Geometry'), 
-                                                                4326, 
+                                                                self.quotedValue('Geometry'),
+                                                                4326,
                                                                 self.quotedValue('POINT'))
         print sqlGeom
 
@@ -126,7 +125,7 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
         cur.execute(sql)
         cur.execute(sqlGeom)
         cur.execute(sqlIndex)
-        
+
         uri = QgsDataSourceURI()
         uri.setDatabase(self.mDatabaseComboBox.currentText())
         schema = ''
@@ -135,20 +134,20 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
         uri.setDataSource(schema, table, geom_column)
         display_name = self.leLayerName.text()
         layer = QgsVectorLayer(uri.uri(), display_name, 'spatialite')
-        
+
         if layer.isValid():
             print 'Layer valid'
             QgsMapLayerRegistry.instance().addMapLayer(layer)
         db.close()
 
-    def quotedIdentifier(self, id):
-        id = id.replace('\"', '\"\"')
-        return '\"' + id + '\"'
-        
+    def quotedIdentifier(self, idf):
+        idf = idf.replace('\"', '\"\"')
+        return '\"' + idf + '\"'
+
     def quotedValue(self, value):
         value = value.replace('\'', '\'\'')
         return '\'' + value + '\''
-    
+
     @pyqtSlot(name='on_pushButtonNewLayer_clicked')
     def newLayer(self):
         self.iface.newLayerMenu().popup(self.pos())

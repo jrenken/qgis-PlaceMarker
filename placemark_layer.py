@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import pyqtSlot, QVariant
+from PyQt4.QtCore import pyqtSlot, QVariant, QObject
 from qgis._core import QgsVectorDataProvider, QgsField, QgsGeometry, QgsFeature
 
 
@@ -31,24 +31,25 @@ REQUIRED_FIELDS = [['pkuid', QVariant.Int],
                    ['timestamp', QVariant.String]]
 
 
-class PlaceMarkLayer:
+class PlaceMarkLayer(QObject):
     '''
     classdocs
     '''
-    
+
     REQUIRED_FIELDS = [['pkuid', QVariant.Int],
                        ['name', QVariant.String],
                        ['description', QVariant.String],
                        ['class', QVariant.String],
                        ['timestamp', QVariant.String]]
 
-    def __init__(self, layer=None):
+    def __init__(self, layer=None, parent=None):
         '''
         Constructor
 
         :param layer: vector layer where to add the placemarks
         :type layer: QgsVectorLayer
         '''
+        super(PlaceMarkLayer, self).__init__(parent)
         self.setLayer(layer)
 
     def setLayer(self, layer):
@@ -60,9 +61,9 @@ class PlaceMarkLayer:
         layerOk = self.checkLayer(layer)
         if layerOk:
             print "Layer ok:", layer.name()
-            self.layer = layer;
+            self.layer = layer
             layer.layerDeleted.connect(self.layerDeleted)
-            self.hasLayer = True        
+            self.hasLayer = True
 
     def addPlaceMark(self, pos, name, description, category, timestamp):
         ''' adds a point to the layer
@@ -76,7 +77,7 @@ class PlaceMarkLayer:
         :param description: extended text for the placemark
         :type description: string
 
-        :param category: category to define the 
+        :param category: category to define the
         :type category: string
 
         :param timestamp: creation time of the placemark
@@ -91,19 +92,20 @@ class PlaceMarkLayer:
             feat.setGeometry(QgsGeometry.fromPoint(pos))
             (res, _) = self.layer.dataProvider().addFeatures([feat])
             if res:
-                self.layer.commitChanges() 
+                self.layer.updateExtents()
+                self.layer.commitChanges()
             return res
         return False
-            
+
     @pyqtSlot()
     def layerDeleted(self):
         self.layer = None
         self.hasLayer = False
- 
+
     def addMissingFields(self, layer, missingFields):
         if not missingFields:
             return True
-        if layer.dataProvider().capabilities() & QgsVectorDataProvider.AddAttributes: 
+        if layer.dataProvider().capabilities() & QgsVectorDataProvider.AddAttributes:
             res = layer.dataProvider().addAttributes(missingFields)
             if res:
                 layer.updateFields()
@@ -111,7 +113,7 @@ class PlaceMarkLayer:
         return res
 
     def checkLayer(self, layer):
-        ''' Check if the layer geometry is point and if the 
+        ''' Check if the layer geometry is point and if the
             required attributes are available or can be added
         :param layer: vector layer where to add the placemarks
         :type layer: QgsVectorLayer
@@ -123,13 +125,13 @@ class PlaceMarkLayer:
             try:
                 layer.fields().field(fieldspec[0])
             except KeyError:
-                missingFields.append(QgsField (fieldspec[0], fieldspec[1]))
+                missingFields.append(QgsField(fieldspec[0], fieldspec[1]))
         if missingFields:
             print 'fields missing: ', layer.name()
             return False
-        
+
         caps = layer.dataProvider().capabilities()
-        reqCaps = (QgsVectorDataProvider.AddFeatures | QgsVectorDataProvider.DeleteFeatures) 
+        reqCaps = (QgsVectorDataProvider.AddFeatures | QgsVectorDataProvider.DeleteFeatures)
         if (caps & reqCaps) == reqCaps:
             return True
         return False
