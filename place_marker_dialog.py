@@ -46,6 +46,7 @@ class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
         """Constructor."""
         super(PlaceMarkerDialog, self).__init__(parent)
         self.setupUi(self)
+        self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.iface = iface
         self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
         self.mapTool = QgsMapToolEmitPoint(self.iface.mapCanvas())
