@@ -21,8 +21,6 @@
  ***************************************************************************/
 """
 
-import os
-
 from PyQt4 import QtGui, uic
 from qgis.gui import QgsMapToolEmitPoint, QgsMapTool
 from PyQt4.QtCore import Qt, pyqtSignal, pyqtSlot, QDateTime, QByteArray,\
@@ -32,13 +30,10 @@ from layer_dialog import LayerDialog
 from placemark_layer import PlaceMarkLayer
 from qgis.core import QgsMapLayerRegistry
 from PyQt4.QtGui import QDialogButtonBox, QAbstractButton
-from __builtin__ import int
-
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'place_marker_dialog_base.ui'))
+from ui_place_marker_dialog_base import Ui_PlaceMarkerDialogBase
 
 
-class PlaceMarkerDialog(QtGui.QDialog, FORM_CLASS):
+class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
 
     mouseClicked = pyqtSignal(QgsPoint, Qt.MouseButton)
 
