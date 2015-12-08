@@ -2,7 +2,6 @@
 *_rc.py
 resources.py
 *~
-*.rst
 *.zip
 help/build
 .project
