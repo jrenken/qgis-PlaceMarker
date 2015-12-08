@@ -49,8 +49,9 @@ PY_FILES = \
 	layer_dialog.py \
 	placemark_layer.py
 
-UI_FILES = place_marker_dialog_base.ui \
-	layer_dialog_base.ui
+UI_FILES = layer_dialog_base.ui
+
+COMPILED_UI_FILES = ui_place_marker_dialog_base.py
 
 EXTRAS = metadata.txt icon.png
 
@@ -73,13 +74,16 @@ QGISDIR=.qgis2
 
 default: compile
 
-compile: $(COMPILED_RESOURCE_FILES)
+compile: $(COMPILED_RESOURCE_FILES) $(COMPILED_UI_FILES)
 
 %.py : %.qrc $(RESOURCES_SRC)
 	pyrcc4 -o $*.py  $<
 
 %.qm : %.ts
 	$(LRELEASE) $<
+
+ui_%.py : %.ui
+	pyuic4 -o $@ $<
 
 test: compile transcompile
 	@echo
@@ -111,6 +115,7 @@ deploy: compile doc transcompile
 	cp -vf $(PY_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 	cp -vf $(UI_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 	cp -vf $(COMPILED_RESOURCE_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
+	cp -vf $(COMPILED_UI_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 	cp -vf $(EXTRAS) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 	cp -vfr i18n $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 #	cp -vfr $(HELP) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/help
