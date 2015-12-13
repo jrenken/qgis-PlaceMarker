@@ -3,6 +3,8 @@
 resources.py
 *~
 *.zip
+*.qm
+ui_*.py
 help/build
 .project
 .pydevproject

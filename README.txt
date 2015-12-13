@@ -1,33 +1,20 @@
-Plugin Builder Results
+PlaceMarker Plugin (c) for QGIS
+(c) Copyright 2015 MARUM - Center for Marine Environmental Sciences
+Author: Jens Renken
+Email: renken@marum.de
 
-Your plugin PlaceMarker was created in:
-    /home/jrenken/marum/QGis/PlaceMarker
+Place Marker offers a convenient way of creating and handling placemarks in a vector layer.
 
-Your QGIS plugin directory is located at:
-    /home/jrenken/.qgis2/python/plugins
+PlaceMarker Plugin is licensed under the terms of GNU GPL 2
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
 
-What's Next:
+More info http://wiki.github.com/jrenken/qgis-PlaceMarker/
 
-  * Copy the entire directory containing your new plugin to the QGIS plugin
-    directory
-
-  * Compile the resources file using pyrcc4
-
-  * Run the tests (``make test``)
-
-  * Test the plugin by enabling it in the QGIS plugin manager
-
-  * Customize it by editing the implementation file: ``place_marker.py``
-
-  * Create your own custom icon, replacing the default icon.png
-
-  * Modify your user interface by opening PlaceMarker.ui in Qt Designer
-
-  * You can use the Makefile to compile your Ui and resource files when
-    you make changes. This requires GNU make (gmake)
-
-For more information, see the PyQGIS Developer Cookbook at:
-http://www.qgis.org/pyqgis-cookbook/index.html
-
-(C) 2011-2014 GeoApt LLC - geoapt.com
 Git revision : $Format:%H$
