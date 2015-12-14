@@ -142,8 +142,7 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
                                                  self.comboBoxClass.currentText(),
                                                  self.mDateTimeEdit.dateTime().toString(self.mDateTimeEdit.displayFormat()))
                 if res:
-                    print 'Refresh'
-                    self.iface.mapCanvas().refresh()
+                    self.placeMarkLayer.layer.triggerRepaint()
             if self.layerChanged and self.placeMarkLayer.layer:
                 settings = QSettings()
                 settings.setValue(u'PlaceMarker/LayerId', self.placeMarkLayer.layer.id())

@@ -93,7 +93,6 @@ class PlaceMarkLayer(QObject):
             (res, _) = self.layer.dataProvider().addFeatures([feat])
             if res:
                 self.layer.updateExtents()
-                self.layer.commitChanges()
             return res
         return False
 
