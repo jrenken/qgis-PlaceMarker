@@ -171,12 +171,11 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
     def repaintTrigger(self):
         for i in range(self.mMapLayerComboBox.count()):
             l = self.mMapLayerComboBox.layer(i)
-            v = l.getValues('pkUid')
-            if v[1]:
-                try:
-                    if self.layerfeatureCount[l.id()] != len(v[0]):
-                        self.layerfeatureCount[l.id()] = len(v[0])
-                        l.triggerRepaint()
-                        print 'Repaint', l.name()
-                except KeyError:
-                    self.layerfeatureCount[l.id()] = len(v[0])
+            ids = l.allFeatureIds()
+            try:
+                if self.layerfeatureCount[l.id()] != len(ids):
+                    self.layerfeatureCount[l.id()] = len(ids)
+                    l.triggerRepaint()
+                    print 'Repaint', l.name()
+            except KeyError:
+                self.layerfeatureCount[l.id()] = len(ids)
