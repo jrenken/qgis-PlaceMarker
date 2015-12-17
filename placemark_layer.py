@@ -20,18 +20,11 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import pyqtSlot, QVariant, QObject
+from PyQt4.QtCore import QVariant
 from qgis._core import QgsVectorDataProvider, QgsField, QgsGeometry, QgsFeature
 
 
-REQUIRED_FIELDS = [['pkuid', QVariant.Int],
-                   ['name', QVariant.String],
-                   ['description', QVariant.String],
-                   ['class', QVariant.String],
-                   ['timestamp', QVariant.String]]
-
-
-class PlaceMarkLayer(QObject):
+class PlaceMarkLayer:
     '''
     classdocs
     '''
@@ -42,14 +35,13 @@ class PlaceMarkLayer(QObject):
                        ['class', QVariant.String],
                        ['timestamp', QVariant.String]]
 
-    def __init__(self, layer=None, parent=None):
+    def __init__(self, layer=None):
         '''
         Constructor
 
         :param layer: vector layer where to add the placemarks
         :type layer: QgsVectorLayer
         '''
-        super(PlaceMarkLayer, self).__init__(parent)
         self.setLayer(layer)
 
     def setLayer(self, layer):
@@ -62,7 +54,6 @@ class PlaceMarkLayer(QObject):
         if layerOk:
             print "Layer ok:", layer.name()
             self.layer = layer
-            layer.layerDeleted.connect(self.layerDeleted)
             self.hasLayer = True
 
     def addPlaceMark(self, pos, name, description, category, timestamp):
@@ -95,11 +86,6 @@ class PlaceMarkLayer(QObject):
                 self.layer.updateExtents()
             return res
         return False
-
-    @pyqtSlot()
-    def layerDeleted(self):
-        self.layer = None
-        self.hasLayer = False
 
     def addMissingFields(self, layer, missingFields):
         if not missingFields:

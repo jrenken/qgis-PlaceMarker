@@ -24,8 +24,9 @@
 from PyQt4 import QtGui, uic
 from qgis.gui import QgsMapToolEmitPoint, QgsMapTool
 from PyQt4.QtCore import Qt, pyqtSignal, pyqtSlot, QDateTime, QByteArray,\
-    QSettings
-from qgis.core import QgsPoint, QgsCoordinateTransform, QgsCoordinateReferenceSystem
+    QSettings, QTimer
+from qgis.core import QgsPoint, QgsCoordinateTransform, \
+    QgsCoordinateReferenceSystem, QgsMapLayer
 from layer_dialog import LayerDialog
 from placemark_layer import PlaceMarkLayer
 from qgis.core import QgsMapLayerRegistry
@@ -56,6 +57,8 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
         self.layerId = None
         self.layerChanged = False
         self.placeMarkLayer = PlaceMarkLayer()
+        self.repaintTimer = QTimer()
+        self.layerfeatureCount = dict()
 
     def showEvent(self, event):
         self.exceptLayers()
@@ -65,7 +68,7 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
         else:
             self.restoreGeometry(settings.value('/Windows/PlaceMarker/geometry', QByteArray()))
         self.layerId = settings.value(u'PlaceMarker/LayerId', None)
-        print "Hallo PlaceMark", self.layerId
+#         print "Hallo PlaceMark", self.layerId
         layer = QgsMapLayerRegistry.instance().mapLayer(self.layerId)
         if layer:
             self.mMapLayerComboBox.setLayer(layer)
@@ -73,6 +76,8 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
         if layer:
             self.placeMarkLayer.setLayer(layer)
         self.iface.mapCanvas().setMapTool(self.mapTool)
+        self.repaintTimer.timeout.connect(self.repaintTrigger)
+        self.repaintTimer.start(5000)
         QtGui.QDialog.showEvent(self, event)
 
     def closeEvent(self, event):
@@ -81,12 +86,12 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
         QtGui.QDialog.closeEvent(self, event)
         self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
         self.lineEditPosition.setText(u'')
-        print 'close'
+        self.repaintTimer.stop()
+#         print 'close'
 
     @pyqtSlot(QgsPoint, Qt.MouseButton)
     def mouseClicked(self, pos, button):
         if button == Qt.LeftButton:
-            print 'click'
             self.show()
             self.pos = pos
             self.button_box.button(QDialogButtonBox.Apply).setEnabled(True)
@@ -119,10 +124,9 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
         dlg.show()
         dlg.exec_()
 
-    @pyqtSlot(int, name='on_mMapLayerComboBox_currentIndexChanged')
-    def changeLayer(self, idx):
-        print "change Layer", idx
-        layer = self.mMapLayerComboBox.currentLayer()
+    @pyqtSlot(QgsMapLayer, name='on_mMapLayerComboBox_layerChanged')
+    def changeLayer(self, layer):
+        print "change Layer", layer.name()
         self.placeMarkLayer.setLayer(layer)
         self.layerChanged = True
 
@@ -158,7 +162,21 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
                 print "Except", l.name()
         self.mMapLayerComboBox.setExceptedLayerList(self.mMapLayerComboBox.exceptedLayerList() + excepted)
 
-    @pyqtSlot()
+    @pyqtSlot(int)
     def refreshLayer(self, what):
         print "Layer data changed", what
-        self.iface.mapCanvas().refresh()
+#         self.iface.mapCanvas().refresh()
+
+    @pyqtSlot(name='on_repaintTimer_timeout')
+    def repaintTrigger(self):
+        for i in range(self.mMapLayerComboBox.count()):
+            l = self.mMapLayerComboBox.layer(i)
+            v = l.getValues('pkUid')
+            if v[1]:
+                try:
+                    if self.layerfeatureCount[l.id()] != len(v[0]):
+                        self.layerfeatureCount[l.id()] = len(v[0])
+                        l.triggerRepaint()
+                        print 'Repaint', l.name()
+                except KeyError:
+                    self.layerfeatureCount[l.id()] = len(v[0])
