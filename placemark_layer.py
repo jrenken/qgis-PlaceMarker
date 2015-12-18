@@ -52,7 +52,7 @@ class PlaceMarkLayer:
         self.hasLayer = False
         layerOk = self.checkLayer(layer)
         if layerOk:
-            print "Layer ok:", layer.name()
+#             print "Layer ok:", layer.name()
             self.layer = layer
             self.hasLayer = True
 
@@ -94,7 +94,7 @@ class PlaceMarkLayer:
             res = layer.dataProvider().addAttributes(missingFields)
             if res:
                 layer.updateFields()
-        print "addMissingFields", missingFields, res
+#         print "addMissingFields", missingFields, res
         return res
 
     def checkLayer(self, layer):
@@ -112,7 +112,7 @@ class PlaceMarkLayer:
             except KeyError:
                 missingFields.append(QgsField(fieldspec[0], fieldspec[1]))
         if missingFields:
-            print 'fields missing: ', layer.name()
+#             print 'fields missing: ', layer.name()
             return False
 
         caps = layer.dataProvider().capabilities()

@@ -33,6 +33,7 @@ from qgis.core import QgsMapLayerRegistry
 from PyQt4.QtGui import QDialogButtonBox, QAbstractButton
 from ui_place_marker_dialog_base import Ui_PlaceMarkerDialogBase
 
+REFRESH_RATE = 5000
 
 class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
 
@@ -58,6 +59,7 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
         self.layerChanged = False
         self.placeMarkLayer = PlaceMarkLayer()
         self.repaintTimer = QTimer()
+        self.repaintTimer.timeout.connect(self.repaintTrigger)
         self.layerfeatureCount = dict()
 
     def showEvent(self, event):
@@ -76,8 +78,8 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
         if layer:
             self.placeMarkLayer.setLayer(layer)
         self.iface.mapCanvas().setMapTool(self.mapTool)
-        self.repaintTimer.timeout.connect(self.repaintTrigger)
-        self.repaintTimer.start(5000)
+        refresh = settings.value(u'PlaceMarker/AutoRefreshLayer', False, type=bool)
+        self.checkBoxAutoRefresh.setChecked(refresh)
         QtGui.QDialog.showEvent(self, event)
 
     def closeEvent(self, event):
@@ -86,7 +88,6 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
         QtGui.QDialog.closeEvent(self, event)
         self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
         self.lineEditPosition.setText(u'')
-        self.repaintTimer.stop()
 #         print 'close'
 
     @pyqtSlot(QgsPoint, Qt.MouseButton)
@@ -101,12 +102,10 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
 
     @pyqtSlot()
     def accept(self):
-        print 'accept', self.pos
         QtGui.QDialog.reject(self)
 
     @pyqtSlot()
     def reject(self):
-        print 'reject'
         self.geom = self.saveGeometry()
         QtGui.QDialog.reject(self)
 
@@ -126,14 +125,14 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
 
     @pyqtSlot(QgsMapLayer, name='on_mMapLayerComboBox_layerChanged')
     def changeLayer(self, layer):
-        print "change Layer", layer.name()
+#         print "change Layer", layer.name()
         self.placeMarkLayer.setLayer(layer)
         self.layerChanged = True
 
     @pyqtSlot(QgsMapTool, QgsMapTool)
     def mapToolChanged(self, mapToolNew, mapToolOld):
         if mapToolOld == self.mapTool and mapToolNew != self.mapTool:
-            print 'mapToolChanged'
+#             print 'mapToolChanged'
             self.close()
 
     @pyqtSlot(QAbstractButton, name='on_button_box_clicked')
@@ -153,19 +152,13 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
             self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
 
     def exceptLayers(self):
-        print 'exceptLayers'
+#         print 'exceptLayers'
         excepted = []
         for i in range(self.mMapLayerComboBox.count()):
             l = self.mMapLayerComboBox.layer(i)
             if not self.placeMarkLayer.checkLayer(l):
                 excepted.append(l)
-                print "Except", l.name()
         self.mMapLayerComboBox.setExceptedLayerList(self.mMapLayerComboBox.exceptedLayerList() + excepted)
-
-    @pyqtSlot(int)
-    def refreshLayer(self, what):
-        print "Layer data changed", what
-#         self.iface.mapCanvas().refresh()
 
     @pyqtSlot(name='on_repaintTimer_timeout')
     def repaintTrigger(self):
@@ -176,6 +169,15 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
                 if self.layerfeatureCount[l.id()] != len(ids):
                     self.layerfeatureCount[l.id()] = len(ids)
                     l.triggerRepaint()
-                    print 'Repaint', l.name()
+#                     print 'Repaint', l.name()
             except KeyError:
                 self.layerfeatureCount[l.id()] = len(ids)
+
+    @pyqtSlot(bool, name='on_checkBoxAutoRefresh_toggled')
+    def toggleAutoRefresh(self, checked):
+        if checked:
+            self.repaintTimer.start(REFRESH_RATE)
+        else:
+            self.repaintTimer.stop()
+        settings = QSettings()
+        settings.setValue(u'PlaceMarker/AutoRefreshLayer', checked)
