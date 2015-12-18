@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-
+import os
 from PyQt4 import QtGui, uic
 from qgis.gui import QgsMapToolEmitPoint, QgsMapTool
 from PyQt4.QtCore import Qt, pyqtSignal, pyqtSlot, QDateTime, QByteArray,\
@@ -32,6 +32,7 @@ from placemark_layer import PlaceMarkLayer
 from qgis.core import QgsMapLayerRegistry
 from PyQt4.QtGui import QDialogButtonBox, QAbstractButton
 from ui_place_marker_dialog_base import Ui_PlaceMarkerDialogBase
+from qgis.utils import showPluginHelp
 
 REFRESH_RATE = 5000
 
@@ -181,3 +182,8 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
             self.repaintTimer.stop()
         settings = QSettings()
         settings.setValue(u'PlaceMarker/AutoRefreshLayer', checked)
+
+    @pyqtSlot(name='on_button_box_helpRequested')
+    def showHelp(self):
+        url = 'file://' + os.path.join(os.path.dirname(__file__), 'help', 'index.html')
+        self.iface.openURL(url, False)

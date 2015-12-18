@@ -37,32 +37,32 @@
 <context>
     <name>LayerDialog</name>
     <message>
-        <location filename="layer_dialog.py" line="64"/>
+        <location filename="layer_dialog.py" line="63"/>
         <source>New SpatiaLite Database File</source>
         <translation>Neue Spatialite Datenbank Datei</translation>
     </message>
     <message>
-        <location filename="layer_dialog.py" line="64"/>
+        <location filename="layer_dialog.py" line="63"/>
         <source>SpatiaLite</source>
         <translation>SpatiaLite</translation>
     </message>
     <message>
-        <location filename="layer_dialog.py" line="100"/>
+        <location filename="layer_dialog.py" line="99"/>
         <source>@</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="layer_dialog.py" line="160"/>
+        <location filename="layer_dialog.py" line="159"/>
         <source>SpatiaLite Database</source>
         <translation>SpatiaLite Datenbank</translation>
     </message>
     <message>
-        <location filename="layer_dialog.py" line="102"/>
+        <location filename="layer_dialog.py" line="101"/>
         <source>Registered new database!</source>
         <translation>Neue Datenbank registriert!</translation>
     </message>
     <message>
-        <location filename="layer_dialog.py" line="160"/>
+        <location filename="layer_dialog.py" line="159"/>
         <source>Need a layer name</source>
         <translation>Layer Name wird benötigt</translation>
     </message>
@@ -70,12 +70,12 @@
 <context>
     <name>PlaceMarker</name>
     <message>
-        <location filename="place_marker.py" line="191"/>
+        <location filename="place_marker.py" line="188"/>
         <source>&amp;Place Marker</source>
         <translation>&amp;Place-Marker</translation>
     </message>
     <message>
-        <location filename="place_marker.py" line="180"/>
+        <location filename="place_marker.py" line="179"/>
         <source>Place marker</source>
         <translation>Place Marker</translation>
     </message>
@@ -88,64 +88,69 @@
         <translation>Placemarker Objekt Attribute</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="28"/>
+        <location filename="place_marker_dialog_base.ui" line="23"/>
         <source>Layer:</source>
         <translation>Layer:</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="44"/>
-        <source>Create new memory layer</source>
-        <translation>Neuen Temporätlayer erzeugen</translation>
-    </message>
-    <message>
-        <location filename="place_marker_dialog_base.ui" line="47"/>
+        <location filename="place_marker_dialog_base.ui" line="42"/>
         <source>...</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="66"/>
+        <location filename="place_marker_dialog_base.ui" line="68"/>
         <source>Name:</source>
         <translation>Name:</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="73"/>
+        <location filename="place_marker_dialog_base.ui" line="85"/>
         <source>Description:</source>
         <translation>Beschreibung:</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="98"/>
+        <location filename="place_marker_dialog_base.ui" line="110"/>
         <source>Interesting</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="103"/>
+        <location filename="place_marker_dialog_base.ui" line="115"/>
         <source>Danger</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="108"/>
+        <location filename="place_marker_dialog_base.ui" line="120"/>
         <source>Stay away</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="116"/>
+        <location filename="place_marker_dialog_base.ui" line="128"/>
         <source>Position (Lat, Lon):</source>
         <translation>Position (Lat, Lon):</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="130"/>
+        <location filename="place_marker_dialog_base.ui" line="142"/>
         <source>Date/Time (UTC):</source>
         <translation>Datum/Uhrzeit(UTC):</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="137"/>
+        <location filename="place_marker_dialog_base.ui" line="149"/>
         <source>dd.MM.yy   HH:mm:ss</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="87"/>
+        <location filename="place_marker_dialog_base.ui" line="99"/>
         <source>Class:</source>
         <translation>Klasse:</translation>
+    </message>
+    <message>
+        <location filename="place_marker_dialog_base.ui" line="39"/>
+        <source>Create new spatialite layer</source>
+        <translation>Neuen Spatialite Layer erzeugen</translation>
+    </message>
+    <message>
+        <location filename="place_marker_dialog_base.ui" line="51"/>
+        <source>Autorefresh Layer</source>
+        <translation>Layer auf Änderungen überwachen</translation>
     </message>
 </context>
 </TS>

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>423</width>
-    <height>290</height>
+    <height>297</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,7 +36,7 @@
      <item>
       <widget class="QToolButton" name="toolButtonNewLayer">
        <property name="toolTip">
-        <string>Create new memory layer</string>
+        <string>Create new spatialite layer</string>
        </property>
        <property name="text">
         <string>...</string>
@@ -168,7 +168,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Apply|QDialogButtonBox::Close</set>
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Close|QDialogButtonBox::Help</set>
      </property>
      <property name="centerButtons">
       <bool>false</bool>
