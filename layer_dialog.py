@@ -26,9 +26,9 @@ import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, QSettings, QFileInfo
 from PyQt4.QtGui import QDialogButtonBox, QFileDialog, QSizePolicy
-from qgis._core import QgsDataSourceURI, QgsVectorLayer, QgsMapLayerRegistry
+from qgis.core import QgsDataSourceURI, QgsVectorLayer, QgsMapLayerRegistry
 from pyspatialite import dbapi2 as sqlite
-from qgis._gui import QgsMessageBar
+from qgis.gui import QgsMessageBar
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'layer_dialog_base.ui'))
@@ -39,6 +39,14 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
     classdocs
     '''
 
+    DEFAULT_PROPERTIES = {
+        u'labeling': u'pal',
+        u'labeling/enabled': u'true',
+        u'labeling/fieldName': u'name',
+        u'labeling/drawLabels': u'true',
+#        u'variableNames': u'_fields_'
+        }
+ 
     def __init__(self, iface, parent=None):
         '''
         Constructor
@@ -137,6 +145,8 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
 
         if layer.isValid():
             print 'Layer valid'
+            for k, v in self.DEFAULT_PROPERTIES.iteritems():
+                layer.setCustomProperty(k, v)
             QgsMapLayerRegistry.instance().addMapLayer(layer)
         db.close()
 

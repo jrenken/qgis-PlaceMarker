@@ -2,7 +2,7 @@
 
 Place Marker offers a convenient way of creating and handling placemarks in a vector layer. 
 The preferred dataprovider for the layer is Spatialite. This eases synchronisation of 
-placemakrs over multiple running instances of QGis.
+placemakers over multiple running instances of QGis.
 
 ## Features
 
