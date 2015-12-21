@@ -24,21 +24,22 @@ import os
 from PyQt4 import QtGui, uic
 from qgis.gui import QgsMapToolEmitPoint, QgsMapTool
 from PyQt4.QtCore import Qt, pyqtSignal, pyqtSlot, QDateTime, QByteArray,\
-    QSettings, QTimer
+    QSettings, QTimer, QModelIndex, QPoint
 from qgis.core import QgsPoint, QgsCoordinateTransform, \
     QgsCoordinateReferenceSystem, QgsMapLayer
 from layer_dialog import LayerDialog
 from placemark_layer import PlaceMarkLayer
 from qgis.core import QgsMapLayerRegistry
-from PyQt4.QtGui import QDialogButtonBox, QAbstractButton
+from PyQt4.QtGui import QDialogButtonBox, QAbstractButton, QAction, QKeySequence
 from ui_place_marker_dialog_base import Ui_PlaceMarkerDialogBase
-from qgis.utils import showPluginHelp
 
 REFRESH_RATE = 5000
 
 class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
 
     mouseClicked = pyqtSignal(QgsPoint, Qt.MouseButton)
+    
+    DEFAULT_CLASSES = [u'Interesting', u'Danger', u'Stay away']
 
     def __init__(self, iface, parent=None):
         """Constructor."""
@@ -46,16 +47,30 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
         self.setupUi(self)
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.iface = iface
+        settings = QSettings()
+        try:
+            classes = settings.value(u'PlaceMarker/Classes', 
+                                 defaultValue=self.DEFAULT_CLASSES, type=str)
+            self.comboBoxClass.addItems(classes)
+        except TypeError:
+            self.comboBoxClass.addItems(self.DEFAULT_CLASSES)
+
+        delClassAction = QAction(self.tr(u'Remove current class'), self.comboBoxClass)
+        delClassAction.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_Delete))
+        delClassAction.triggered.connect(self.removeClass)
+        self.comboBoxClass.addAction(delClassAction)
         self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
         self.mapTool = QgsMapToolEmitPoint(self.iface.mapCanvas())
         self.mapTool.canvasClicked.connect(self.mouseClicked)
+        self.comboBoxClass.model().rowsInserted.connect(self.classChanged)
+        self.comboBoxClass.model().rowsRemoved.connect(self.classChanged)
         self.crsXform = QgsCoordinateTransform()
         self.crsXform.setDestCRS(QgsCoordinateReferenceSystem(4326))
         self.changeCrs()
         self.iface.mapCanvas().destinationCrsChanged.connect(self.changeCrs)
         self.iface.mapCanvas().mapToolSet[QgsMapTool, QgsMapTool].connect(self.mapToolChanged)
         self.pos = None
-        self.geom = None
+#         self.geom = None
         self.layerId = None
         self.layerChanged = False
         self.placeMarkLayer = PlaceMarkLayer()
@@ -63,13 +78,15 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
         self.repaintTimer.timeout.connect(self.repaintTrigger)
         self.layerfeatureCount = dict()
 
+        
+
     def showEvent(self, event):
         self.exceptLayers()
         settings = QSettings()
-        if self.geom:
-            self.restoreGeometry(self.geom)
-        else:
-            self.restoreGeometry(settings.value('/Windows/PlaceMarker/geometry', QByteArray()))
+#         if self.geom:
+#             self.restoreGeometry(self.geom)
+#         else:
+        self.restoreGeometry(settings.value(u'/Windows/PlaceMarker/geometry', QByteArray()))
         self.layerId = settings.value(u'PlaceMarker/LayerId', None)
 #         print "Hallo PlaceMark", self.layerId
         layer = QgsMapLayerRegistry.instance().mapLayer(self.layerId)
@@ -85,7 +102,7 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
 
     def closeEvent(self, event):
         settings = QSettings()
-        settings.setValue('/Windows/PlaceMarker/geometry', self.saveGeometry());
+        settings.setValue(u'/Windows/PlaceMarker/geometry', self.saveGeometry());
         QtGui.QDialog.closeEvent(self, event)
         self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
         self.lineEditPosition.setText(u'')
@@ -107,7 +124,7 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
 
     @pyqtSlot()
     def reject(self):
-        self.geom = self.saveGeometry()
+#         self.geom = self.saveGeometry()
         QtGui.QDialog.reject(self)
 
     @pyqtSlot()
@@ -187,3 +204,18 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
     def showHelp(self):
         url = 'file://' + os.path.join(os.path.dirname(__file__), 'help', 'index.html')
         self.iface.openURL(url, False)
+
+    @pyqtSlot(QModelIndex, int, int)
+    def classChanged(self, start, end):
+        settings = QSettings()
+        sl = []
+        for i in range(self.comboBoxClass.count()):
+            sl.append(self.comboBoxClass.itemText(i))
+        settings.setValue(u'PlaceMarker/Classes', sl)
+
+    @pyqtSlot()
+    def removeClass(self):
+        if self.comboBoxClass.hasFocus():
+            i = self.comboBoxClass.currentIndex()
+            if i > -1:
+                self.comboBoxClass.removeItem(i)

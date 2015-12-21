@@ -17,6 +17,9 @@
    <double>1.000000000000000</double>
   </property>
   <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
    <item row="0" column="0">
     <widget class="QLabel" name="label_6">
      <property name="text">
@@ -105,21 +108,6 @@
      <property name="editable">
       <bool>true</bool>
      </property>
-     <item>
-      <property name="text">
-       <string>Interesting</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Danger</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Stay away</string>
-      </property>
-     </item>
     </widget>
    </item>
    <item row="6" column="0">
@@ -146,13 +134,13 @@
    <item row="7" column="1">
     <widget class="QgsDateTimeEdit" name="mDateTimeEdit">
      <property name="displayFormat">
-      <string>dd.MM.yy   HH:mm:ss</string>
+      <string>dd-MM-yy HH:mm:ss</string>
      </property>
      <property name="calendarPopup">
       <bool>true</bool>
      </property>
      <property name="currentSectionIndex">
-      <number>4</number>
+      <number>0</number>
      </property>
      <property name="timeSpec">
       <enum>Qt::UTC</enum>
