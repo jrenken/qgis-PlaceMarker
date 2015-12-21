@@ -45,10 +45,15 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
         """Constructor."""
         super(PlaceMarkerDialog, self).__init__(parent)
         self.setupUi(self)
+        hb = self.button_box.button(QDialogButtonBox.Help)
+        if hb:
+            hb.setDefault(False)
+            hb.setAutoDefault(False)
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.iface = iface
         settings = QSettings()
         try:
+            self.restoreGeometry(settings.value(u'/Windows/PlaceMarker/geometry', QByteArray(), type=QByteArray))
             classes = settings.value(u'PlaceMarker/Classes', 
                                  defaultValue=self.DEFAULT_CLASSES, type=str)
             self.comboBoxClass.addItems(classes)
@@ -70,7 +75,6 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
         self.iface.mapCanvas().destinationCrsChanged.connect(self.changeCrs)
         self.iface.mapCanvas().mapToolSet[QgsMapTool, QgsMapTool].connect(self.mapToolChanged)
         self.pos = None
-#         self.geom = None
         self.layerId = None
         self.layerChanged = False
         self.placeMarkLayer = PlaceMarkLayer()
@@ -83,12 +87,7 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
     def showEvent(self, event):
         self.exceptLayers()
         settings = QSettings()
-#         if self.geom:
-#             self.restoreGeometry(self.geom)
-#         else:
-        self.restoreGeometry(settings.value(u'/Windows/PlaceMarker/geometry', QByteArray()))
         self.layerId = settings.value(u'PlaceMarker/LayerId', None)
-#         print "Hallo PlaceMark", self.layerId
         layer = QgsMapLayerRegistry.instance().mapLayer(self.layerId)
         if layer:
             self.mMapLayerComboBox.setLayer(layer)
@@ -106,7 +105,7 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
         QtGui.QDialog.closeEvent(self, event)
         self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
         self.lineEditPosition.setText(u'')
-#         print 'close'
+        print 'close', self.x()
 
     @pyqtSlot(QgsPoint, Qt.MouseButton)
     def mouseClicked(self, pos, button):
@@ -118,14 +117,13 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
             self.geoPos = self.crsXform.transform(self.pos)
             self.lineEditPosition.setText(', '.join(self.geoPos.toDegreesMinutes(5, True, True).rsplit(',')[::-1]))
 
-    @pyqtSlot()
-    def accept(self):
-        QtGui.QDialog.reject(self)
-
-    @pyqtSlot()
-    def reject(self):
-#         self.geom = self.saveGeometry()
-        QtGui.QDialog.reject(self)
+#     @pyqtSlot()
+#     def accept(self):
+#         QtGui.QDialog.reject(self)
+# 
+#     @pyqtSlot()
+#     def reject(self):
+#         QtGui.QDialog.reject(self)
 
     @pyqtSlot()
     def changeCrs(self):
@@ -156,7 +154,7 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
     @pyqtSlot(QAbstractButton, name='on_button_box_clicked')
     def applyNewPlacemark(self, button):
         if self.button_box.buttonRole(button) == QDialogButtonBox.ApplyRole:
-            if self.pos is not None:
+            if self.pos and self.lineEditName.text():
                 res = self.placeMarkLayer.addPlaceMark(self.geoPos,
                                                  self.lineEditName.text(),
                                                  self.lineEditDescription.text(),
