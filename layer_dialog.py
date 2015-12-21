@@ -130,6 +130,8 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
             cur.execute(sql)
             cur.execute(sqlGeom)
             cur.execute(sqlIndex)
+            db.commit()
+            db.close()
         except:
             self.iface.messageBar().pushMessage(self.tr("SpatiaLite Database"), self.tr("Creating layer failed"),
                                  level=QgsMessageBar.CRITICAL, duration=5)
@@ -148,7 +150,6 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
             for k, v in self.DEFAULT_PROPERTIES.iteritems():
                 layer.setCustomProperty(k, v)
             QgsMapLayerRegistry.instance().addMapLayer(layer)
-        db.close()
 
     def quotedIdentifier(self, idf):
         idf = idf.replace('\"', '\"\"')
