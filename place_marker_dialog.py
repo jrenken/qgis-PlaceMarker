@@ -105,7 +105,6 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
         QtGui.QDialog.closeEvent(self, event)
         self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
         self.lineEditPosition.setText(u'')
-        print 'close', self.x()
 
     @pyqtSlot(QgsPoint, Qt.MouseButton)
     def mouseClicked(self, pos, button):
@@ -141,14 +140,12 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
 
     @pyqtSlot(QgsMapLayer, name='on_mMapLayerComboBox_layerChanged')
     def changeLayer(self, layer):
-#         print "change Layer", layer.name()
         self.placeMarkLayer.setLayer(layer)
         self.layerChanged = True
 
     @pyqtSlot(QgsMapTool, QgsMapTool)
     def mapToolChanged(self, mapToolNew, mapToolOld):
         if mapToolOld == self.mapTool and mapToolNew != self.mapTool:
-#             print 'mapToolChanged'
             self.close()
 
     @pyqtSlot(QAbstractButton, name='on_button_box_clicked')
@@ -168,7 +165,6 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
             self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
 
     def exceptLayers(self):
-#         print 'exceptLayers'
         excepted = []
         for i in range(self.mMapLayerComboBox.count()):
             l = self.mMapLayerComboBox.layer(i)
@@ -185,7 +181,6 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
                 if self.layerfeatureCount[l.id()] != len(ids):
                     self.layerfeatureCount[l.id()] = len(ids)
                     l.triggerRepaint()
-#                     print 'Repaint', l.name()
             except KeyError:
                 self.layerfeatureCount[l.id()] = len(ids)
 
@@ -204,7 +199,7 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
         self.iface.openURL(url, False)
 
     @pyqtSlot(QModelIndex, int, int)
-    def classChanged(self, start, end):
+    def classChanged(self, idx, start, end):
         settings = QSettings()
         sl = []
         for i in range(self.comboBoxClass.count()):

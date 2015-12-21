@@ -44,7 +44,6 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
         u'labeling/enabled': u'true',
         u'labeling/fieldName': u'name',
         u'labeling/drawLabels': u'true',
-#        u'variableNames': u'_fields_'
         }
  
     def __init__(self, iface, parent=None):
@@ -83,14 +82,14 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
     def createDb(self, fileName):
         '''
         '''
-        print 'create db', fileName
         db = sqlite.connect(fileName)
         cur = db.cursor()
 
         try:
             db.enable_load_extension(True)
         except:
-            print "SQLITE Load_extension off"
+            self.bar.pushMessage(self.tr("SpatiaLite Database"), self.tr("SQLITE Load_extension off!"),
+                                 level=QgsMessageBar.CRITCAL)
 
         cur.execute("Select initspatialmetadata(1)")
         db.commit()
@@ -107,7 +106,7 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
             settings.setValue('/SpatiaLite/connections/selected', fi.fileName() + self.tr('@') + fi.canonicalFilePath())
             settings.setValue(key, fi.canonicalFilePath())
             self.bar.pushMessage(self.tr("SpatiaLite Database"), self.tr("Registered new database!"),
-                                 level=QgsMessageBar.INFO)
+                                 level=QgsMessageBar.SUCCESS)
         return True
 
     def createLayer(self):
@@ -116,24 +115,26 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
         sql = u'create table ' + self.quotedIdentifier(self.leLayerName.text()) + '('
         sql += u'pkuid integer primary key autoincrement,'
         sql += u'name text,description text,class text, timestamp text)'
-        print sql
 
         sqlGeom = u'select AddGeometryColumn(%s,%s,%d,%s,2)' % (self.quotedValue(self.leLayerName.text()),
                                                                 self.quotedValue('Geometry'),
                                                                 4326,
                                                                 self.quotedValue('POINT'))
-        print sqlGeom
 
         sqlIndex = u'select CreateSpatialIndex(%s,%s)' % (self.quotedValue(self.leLayerName.text()),
                                                          self.quotedValue('Geometry'))
-        print sqlIndex
 
-        db = sqlite.connect(self.mDatabaseComboBox.currentText())
-        cur = db.cursor()
-        cur.execute(sql)
-        cur.execute(sqlGeom)
-        cur.execute(sqlIndex)
-
+        try:
+            db = sqlite.connect(self.mDatabaseComboBox.currentText())
+            cur = db.cursor()
+            cur.execute(sql)
+            cur.execute(sqlGeom)
+            cur.execute(sqlIndex)
+        except:
+            self.iface.messageBar().pushMessage(self.tr("SpatiaLite Database"), self.tr("Creating layer failed"),
+                                 level=QgsMessageBar.CRITICAL, duration=5)
+            return
+            
         uri = QgsDataSourceURI()
         uri.setDatabase(self.mDatabaseComboBox.currentText())
         schema = ''
@@ -144,7 +145,6 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
         layer = QgsVectorLayer(uri.uri(), display_name, 'spatialite')
 
         if layer.isValid():
-            print 'Layer valid'
             for k, v in self.DEFAULT_PROPERTIES.iteritems():
                 layer.setCustomProperty(k, v)
             QgsMapLayerRegistry.instance().addMapLayer(layer)
