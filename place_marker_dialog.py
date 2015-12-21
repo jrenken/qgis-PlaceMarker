@@ -51,6 +51,7 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
             hb.setAutoDefault(False)
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.iface = iface
+        self.mMapLayerComboBox.model().rowsInserted.connect(self.updateLayerList)
         settings = QSettings()
         try:
             self.restoreGeometry(settings.value(u'/Windows/PlaceMarker/geometry', QByteArray(), type=QByteArray))
@@ -166,11 +167,12 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
 
     def exceptLayers(self):
         excepted = []
+        self.mMapLayerComboBox.setExceptedLayerList(excepted)
         for i in range(self.mMapLayerComboBox.count()):
             l = self.mMapLayerComboBox.layer(i)
             if not self.placeMarkLayer.checkLayer(l):
                 excepted.append(l)
-        self.mMapLayerComboBox.setExceptedLayerList(self.mMapLayerComboBox.exceptedLayerList() + excepted)
+        self.mMapLayerComboBox.setExceptedLayerList(excepted)
 
     @pyqtSlot(name='on_repaintTimer_timeout')
     def repaintTrigger(self):
@@ -212,3 +214,7 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
             i = self.comboBoxClass.currentIndex()
             if i > -1:
                 self.comboBoxClass.removeItem(i)
+
+    @pyqtSlot(QModelIndex, int, int)
+    def updateLayerList(self, idx, start, end):
+        self.exceptLayers()
