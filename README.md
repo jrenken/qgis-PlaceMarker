@@ -2,14 +2,14 @@
 
 Place Marker offers a convenient way of creating and handling placemarks in a vector layer. 
 The preferred dataprovider for the layer is Spatialite. This eases synchronisation of 
-placemakers over multiple running instances of QGis.
+placemakers over multiple running QGIS instances.
 
 ## Features
 
-The Plugin allows placement of markers in a vectorlayer without switching the layer to edit mode.
-The layer needs to have a defined minumum set of attributes, e.g. name, description, class and timestamp.
-The layer selection combobox only contains layers which fullfill these minumum reqirements.
-The plugin can create and add a spatialite database and vectorlayer.
+The Plugin allows placement of markers in a vector layer without switching the layer to edit mode.
+The layer needs to have a defined minimum set of attributes, e.g. name, description, class and timestamp.
+The layer selection combobox only contains layers which fullfill these minimum reqirements.
+The plugin can create and add a spatialite database and vector layer.
 Basic labeling is enabled on newly created vector layers. 
 
 ## Installation
@@ -17,7 +17,7 @@ Basic labeling is enabled on newly created vector layers.
 ### via git
 
 * Clone the repository
-* Execute "make deploy" (only work fluently on linux due to dependency of qgis custom widgets)
+* Execute "make deploy" (works fluently only on Linux due to dependencies of QGIS custom widgets)
 
 ### via repo server
 
