@@ -11,17 +11,16 @@ Welcome to PlaceMarker's documentation!
 
 Concepts
 ==================
-Placemarker offers a convenient way to place markers on a vector layer. The preferred dataprovider is spatialite.
-This eases the synchronisation of placemarks between several QGis instances.
+Place Marker offers a convenient way of creating and handling placemarks in a vector layer. 
+The preferred dataprovider for the layer is Spatialite. This eases synchronisation of 
+placemakers over multiple running QGIS instances.
 The plugin also works with other vector data providers if the required attributes are present in the layer.
 Creation of a new layer is only supported for spatialite.
-
-
 
 .. index:: Configuration and Operation
  
 Configuration and Operation
-==================
+============================
 
 #. Activate the dialog by clicking on the toolbutton or on the plugin menu entry.
 #. Select a layer from the combobox. The available layers fullfill the necessary requirements.
@@ -34,9 +33,9 @@ Configuration and Operation
 
 General Hints
 ==================
-* A basic labeling is applied to new layers. For existing layer loaded into the project, this has to be done by hand int the layer properties.
+* A basic labeling is applied to new layers. For existing layer loaded into the project, this has to be done by hand in the layer properties.
 * The appearence of the symbols can be changed in the layer properties.
-* The class can be used to apply different symbols depending on the class. Select *Categorized* or *Rule-based*in the style panel of the layer properties.
+* The class can be used to apply different symbols depending on the class. Select *Categorized* or *Rule-based* in the style panel of the layer properties.
 * The class combo box can be extended by additional classes. Remove a class with *CTRL-Delete*
 
 
