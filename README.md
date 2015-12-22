@@ -7,20 +7,23 @@ placemakers over multiple running instances of QGis.
 ## Features
 
 The Plugin allows placement of markers in a vectorlayer without switching the layer to edit mode.
-The layer needs to have a defined minumum set of attributes, e.g. name, descrption and timestamp.
-The layer selction combobox only contains layers which fullfill these minumum reqirement.
-The plugin can create and add a spatialite database and layer. 
+The layer needs to have a defined minumum set of attributes, e.g. name, description, class and timestamp.
+The layer selection combobox only contains layers which fullfill these minumum reqirements.
+The plugin can create and add a spatialite database and vectorlayer.
+Basic labeling is enabled on newly created vector layers. 
 
 ## Installation
 
 ### via git
 
 * Clone the repository
-* Execute "make deploy"
+* Execute "make deploy" (only work fluently on linux due to dependency of qgis custom widgets)
 
 ### via repo server
 
-* not yet
+* Go to plugin manager
+* Enable experimental plugins 
+* Install PlaceMarker
 
 ## License
 

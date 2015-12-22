@@ -121,7 +121,7 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
 
     def createLayer(self):
         '''Create a layer with the required attributes and add the layer to the canvas.
-        The database is taken from database combobox.  The database needs to be registered.
+        The database is taken from database combobox. The database needs to be registered.
         '''
         sql = u'create table ' + self.quotedIdentifier(self.leLayerName.text()) + '('
         sql += u'pkuid integer primary key autoincrement,'
@@ -144,7 +144,7 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
             db.commit()
             db.close()
         except:
-            self.iface.messageBar().pushMessage(self.tr("SpatiaLite Database"), self.tr("Creating layer failed"),
+            self.iface.messageBar().pushMessage(self.tr("SpatiaLite Database"), self.tr("Could not create a new layer!"),
                                  level=QgsMessageBar.CRITICAL, duration=5)
             return
 

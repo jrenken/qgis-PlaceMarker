@@ -37,34 +37,49 @@
 <context>
     <name>LayerDialog</name>
     <message>
-        <location filename="layer_dialog.py" line="63"/>
+        <location filename="layer_dialog.py" line="72"/>
         <source>New SpatiaLite Database File</source>
         <translation>Neue Spatialite Datenbank Datei</translation>
     </message>
     <message>
-        <location filename="layer_dialog.py" line="63"/>
+        <location filename="layer_dialog.py" line="72"/>
         <source>SpatiaLite</source>
         <translation>SpatiaLite</translation>
     </message>
     <message>
-        <location filename="layer_dialog.py" line="99"/>
+        <location filename="layer_dialog.py" line="116"/>
         <source>@</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="layer_dialog.py" line="159"/>
+        <location filename="layer_dialog.py" line="181"/>
         <source>SpatiaLite Database</source>
         <translation>SpatiaLite Datenbank</translation>
     </message>
     <message>
-        <location filename="layer_dialog.py" line="101"/>
+        <location filename="layer_dialog.py" line="118"/>
         <source>Registered new database!</source>
         <translation>Neue Datenbank registriert!</translation>
     </message>
     <message>
-        <location filename="layer_dialog.py" line="159"/>
+        <location filename="layer_dialog.py" line="181"/>
         <source>Need a layer name</source>
         <translation>Layer Name wird benötigt</translation>
+    </message>
+    <message>
+        <location filename="layer_dialog.py" line="94"/>
+        <source>Unable to create database file!</source>
+        <translation>Datenbank konnte nicht erzeugt werden!</translation>
+    </message>
+    <message>
+        <location filename="layer_dialog.py" line="101"/>
+        <source>SQLITE Load_extension off!</source>
+        <translation>SQLITE Load_extension off!</translation>
+    </message>
+    <message>
+        <location filename="layer_dialog.py" line="147"/>
+        <source>Could not create a new layer!</source>
+        <translation>Neuer Layer konnte nicht angelegt werden!</translation>
     </message>
 </context>
 <context>
@@ -81,6 +96,14 @@
     </message>
 </context>
 <context>
+    <name>PlaceMarkerDialog</name>
+    <message>
+        <location filename="place_marker_dialog.py" line="65"/>
+        <source>Remove current class</source>
+        <translation>Entferne Klasse</translation>
+    </message>
+</context>
+<context>
     <name>PlaceMarkerDialogBase</name>
     <message>
         <location filename="place_marker_dialog_base.ui" line="14"/>
@@ -88,69 +111,54 @@
         <translation>Placemarker Objekt Attribute</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="23"/>
+        <location filename="place_marker_dialog_base.ui" line="26"/>
         <source>Layer:</source>
         <translation>Layer:</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="42"/>
+        <location filename="place_marker_dialog_base.ui" line="45"/>
         <source>...</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="68"/>
+        <location filename="place_marker_dialog_base.ui" line="71"/>
         <source>Name:</source>
         <translation>Name:</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="85"/>
+        <location filename="place_marker_dialog_base.ui" line="88"/>
         <source>Description:</source>
         <translation>Beschreibung:</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="110"/>
-        <source>Interesting</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="place_marker_dialog_base.ui" line="115"/>
-        <source>Danger</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="place_marker_dialog_base.ui" line="120"/>
-        <source>Stay away</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="place_marker_dialog_base.ui" line="128"/>
+        <location filename="place_marker_dialog_base.ui" line="119"/>
         <source>Position (Lat, Lon):</source>
         <translation>Position (Lat, Lon):</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="142"/>
+        <location filename="place_marker_dialog_base.ui" line="133"/>
         <source>Date/Time (UTC):</source>
         <translation>Datum/Uhrzeit(UTC):</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="149"/>
-        <source>dd.MM.yy   HH:mm:ss</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="place_marker_dialog_base.ui" line="99"/>
+        <location filename="place_marker_dialog_base.ui" line="102"/>
         <source>Class:</source>
         <translation>Klasse:</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="39"/>
+        <location filename="place_marker_dialog_base.ui" line="42"/>
         <source>Create new spatialite layer</source>
         <translation>Neuen Spatialite Layer erzeugen</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="51"/>
+        <location filename="place_marker_dialog_base.ui" line="54"/>
         <source>Autorefresh Layer</source>
         <translation>Layer auf Änderungen überwachen</translation>
+    </message>
+    <message>
+        <location filename="place_marker_dialog_base.ui" line="140"/>
+        <source>dd-MM-yy HH:mm:ss</source>
+        <translation>dd-MM-yy HH:mm:ss</translation>
     </message>
 </context>
 </TS>
