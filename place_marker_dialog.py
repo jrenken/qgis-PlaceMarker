@@ -21,10 +21,10 @@
  ***************************************************************************/
 """
 import os
-from PyQt4 import QtGui, uic
+from PyQt4 import QtGui
 from qgis.gui import QgsMapToolEmitPoint, QgsMapTool
 from PyQt4.QtCore import Qt, pyqtSignal, pyqtSlot, QDateTime, QByteArray,\
-    QSettings, QTimer, QModelIndex, QPoint
+    QSettings, QTimer, QModelIndex
 from qgis.core import QgsPoint, QgsCoordinateTransform, \
     QgsCoordinateReferenceSystem, QgsMapLayer
 from layer_dialog import LayerDialog
@@ -35,10 +35,11 @@ from ui_place_marker_dialog_base import Ui_PlaceMarkerDialogBase
 
 REFRESH_RATE = 5000
 
+
 class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
 
     mouseClicked = pyqtSignal(QgsPoint, Qt.MouseButton)
-    
+
     DEFAULT_CLASSES = [u'Interesting', u'Danger', u'Stay away']
 
     def __init__(self, iface, parent=None):
@@ -55,7 +56,7 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
         settings = QSettings()
         try:
             self.restoreGeometry(settings.value(u'/Windows/PlaceMarker/geometry', QByteArray(), type=QByteArray))
-            classes = settings.value(u'PlaceMarker/Classes', 
+            classes = settings.value(u'PlaceMarker/Classes',
                                  defaultValue=self.DEFAULT_CLASSES, type=str)
             self.comboBoxClass.addItems(classes)
         except TypeError:
@@ -83,8 +84,6 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
         self.repaintTimer.timeout.connect(self.repaintTrigger)
         self.layerfeatureCount = dict()
 
-        
-
     def showEvent(self, event):
         self.exceptLayers()
         settings = QSettings()
@@ -97,12 +96,14 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
             self.placeMarkLayer.setLayer(layer)
         self.iface.mapCanvas().setMapTool(self.mapTool)
         refresh = settings.value(u'PlaceMarker/AutoRefreshLayer', False, type=bool)
+        self.comboBoxClass.setCurrentIndex(settings.value(u'PlaceMarker/CurrentClass', 0, type=int))
         self.checkBoxAutoRefresh.setChecked(refresh)
         QtGui.QDialog.showEvent(self, event)
 
     def closeEvent(self, event):
         settings = QSettings()
-        settings.setValue(u'/Windows/PlaceMarker/geometry', self.saveGeometry());
+        settings.setValue(u'/Windows/PlaceMarker/geometry', self.saveGeometry())
+        settings.setValue(u'PlaceMarker/CurrentClass', self.comboBoxClass.currentIndex())
         QtGui.QDialog.closeEvent(self, event)
         self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
         self.lineEditPosition.setText(u'')
@@ -116,14 +117,6 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
             self.mDateTimeEdit.setDateTime(QDateTime.currentDateTime().toUTC())
             self.geoPos = self.crsXform.transform(self.pos)
             self.lineEditPosition.setText(', '.join(self.geoPos.toDegreesMinutes(5, True, True).rsplit(',')[::-1]))
-
-#     @pyqtSlot()
-#     def accept(self):
-#         QtGui.QDialog.reject(self)
-# 
-#     @pyqtSlot()
-#     def reject(self):
-#         QtGui.QDialog.reject(self)
 
     @pyqtSlot()
     def changeCrs(self):

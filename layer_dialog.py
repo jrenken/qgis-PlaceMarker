@@ -29,6 +29,7 @@ from PyQt4.QtGui import QDialogButtonBox, QFileDialog, QSizePolicy
 from qgis.core import QgsDataSourceURI, QgsVectorLayer, QgsMapLayerRegistry
 from pyspatialite import dbapi2 as sqlite
 from qgis.gui import QgsMessageBar
+from pyspatialite._spatialite import OperationalError
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'layer_dialog_base.ui'))
@@ -36,7 +37,8 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class LayerDialog(QtGui.QDialog, FORM_CLASS):
     '''
-    classdocs
+    Dialogue for creating a new spatialite vector layer.
+    If needed a new database file can also be created.
     '''
 
     DEFAULT_PROPERTIES = {
@@ -45,7 +47,7 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
         u'labeling/fieldName': u'name',
         u'labeling/drawLabels': u'true',
         }
- 
+
     def __init__(self, iface, parent=None):
         '''
         Constructor
@@ -80,16 +82,24 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
             self.mDatabaseComboBox.setCurrentIndex(0)
 
     def createDb(self, fileName):
+        '''Create a new spatialite database file
+        :param fileName: the filename of the database file
+        :returns: True if the file could be created
+        :rtype: bool
         '''
-        '''
-        db = sqlite.connect(fileName)
-        cur = db.cursor()
+        try:
+            db = sqlite.connect(fileName)
+            cur = db.cursor()
+        except OperationalError:
+            self.bar.pushMessage(self.tr("SpatiaLite Database"), self.tr("Unable to create database file!"),
+                                 level=QgsMessageBar.CRITICAL)
+            return False
 
         try:
             db.enable_load_extension(True)
-        except:
+        except OperationalError:
             self.bar.pushMessage(self.tr("SpatiaLite Database"), self.tr("SQLITE Load_extension off!"),
-                                 level=QgsMessageBar.CRITCAL)
+                                 level=QgsMessageBar.INFO)
 
         cur.execute("Select initspatialmetadata(1)")
         db.commit()
@@ -110,7 +120,8 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
         return True
 
     def createLayer(self):
-        '''
+        '''Create a layer with the required attributes and add the layer to the canvas.
+        The database is taken from database combobox.  The database needs to be registered.
         '''
         sql = u'create table ' + self.quotedIdentifier(self.leLayerName.text()) + '('
         sql += u'pkuid integer primary key autoincrement,'
@@ -136,7 +147,7 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
             self.iface.messageBar().pushMessage(self.tr("SpatiaLite Database"), self.tr("Creating layer failed"),
                                  level=QgsMessageBar.CRITICAL, duration=5)
             return
-            
+
         uri = QgsDataSourceURI()
         uri.setDatabase(self.mDatabaseComboBox.currentText())
         schema = ''
