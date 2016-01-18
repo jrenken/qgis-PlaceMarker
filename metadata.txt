@@ -11,7 +11,7 @@ name=Place Marker
 qgisMinimumVersion=2.8
 description=Place Marker provides a convenient way of adding placemarks to a vector layer.
 version=0.1
-author=Jens Renken (Marum/University of Bremen)
+author=Jens Renken (Marum, University of Bremen)
 email=renken@marum.de
 
 about=Place Marker provides a quick and easy way of creating point layers and adding features with preset attributes.
