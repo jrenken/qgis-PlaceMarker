@@ -9,14 +9,17 @@
 [general]
 name=Place Marker
 qgisMinimumVersion=2.8
-description=Place Marker offers a convenient way to add placemarks to a vector layer.
+description=Place Marker provides a convenient way of adding placemarks to a vector layer.
 version=0.1
 author=Jens Renken (Marum/University of Bremen)
 email=renken@marum.de
 
-about=Place Marker offers a convenient way to add placemarks to a vector layer.
-    To share placemarks over different QGIS instances, cyclic checking and repainting 
-    of the appropiate layers is supported.
+about=Place Marker provides a quick and easy way of creating point layers and adding features with preset attributes.
+    Unlike using the built-in editing tools, the created layer contains the necessary attributes, and newly added features are
+    committed directly to the data store and should be available immediately on other QGIS instances. 
+    It addresses to usage scenarios where QGIS in conjunction with the "PosiView" plugin serves as an online visualization
+    and navigation tool, e.g for scientific subsea surveys with remotely operated or autonomous vehicles.
+    It allows marking and sharing interesting places and events during the dive.
 
 tracker=https://github.com/jrenken/qgis-PlaceMarker/issues
 repository=https://github.com/jrenken/qgis-PlaceMarker
