@@ -52,7 +52,7 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
             hb.setAutoDefault(False)
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.iface = iface
-        self.mMapLayerComboBox.model().rowsInserted.connect(self.updateLayerList)
+        QgsMapLayerRegistry.instance().layersAdded.connect(self.updateLayerList)
         settings = QSettings()
         try:
             self.restoreGeometry(settings.value(u'/Windows/PlaceMarker/geometry', QByteArray(), type=QByteArray))
@@ -208,6 +208,6 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
             if i > -1:
                 self.comboBoxClass.removeItem(i)
 
-    @pyqtSlot(QModelIndex, int, int)
-    def updateLayerList(self, idx, start, end):
+    @pyqtSlot(list)
+    def updateLayerList(self, layers):
         self.exceptLayers()
