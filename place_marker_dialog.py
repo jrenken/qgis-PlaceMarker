@@ -22,7 +22,7 @@
 """
 import os
 from PyQt4 import QtGui
-from qgis.gui import QgsMapToolEmitPoint, QgsMapTool
+from qgis.gui import QgsMapTool
 from PyQt4.QtCore import Qt, pyqtSignal, pyqtSlot, QDateTime, QByteArray,\
     QSettings, QTimer, QModelIndex
 from qgis.core import QgsPoint, QgsCoordinateTransform, \
@@ -32,6 +32,7 @@ from placemark_layer import PlaceMarkLayer
 from qgis.core import QgsMapLayerRegistry
 from PyQt4.QtGui import QDialogButtonBox, QAbstractButton, QAction, QKeySequence
 from ui_place_marker_dialog_base import Ui_PlaceMarkerDialogBase
+from place_marker_maptool import PlaceMarkerMapTool
 
 REFRESH_RATE = 5000
 
@@ -67,7 +68,7 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
         delClassAction.triggered.connect(self.removeClass)
         self.comboBoxClass.addAction(delClassAction)
         self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
-        self.mapTool = QgsMapToolEmitPoint(self.iface.mapCanvas())
+        self.mapTool = PlaceMarkerMapTool(self.iface.mapCanvas())
         self.mapTool.canvasClicked.connect(self.mouseClicked)
         self.comboBoxClass.model().rowsInserted.connect(self.classChanged)
         self.comboBoxClass.model().rowsRemoved.connect(self.classChanged)
@@ -153,10 +154,13 @@ class PlaceMarkerDialog(QtGui.QDialog, Ui_PlaceMarkerDialogBase):
                                                  self.mDateTimeEdit.dateTime().toString(self.mDateTimeEdit.displayFormat()))
                 if res:
                     self.placeMarkLayer.layer.triggerRepaint()
+                self.mapTool.reset()
             if self.layerChanged and self.placeMarkLayer.layer:
                 settings = QSettings()
                 settings.setValue(u'PlaceMarker/LayerId', self.placeMarkLayer.layer.id())
             self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
+        elif self.button_box.buttonRole(button) == QDialogButtonBox.RejectRole:
+            self.mapTool.reset()
 
     def exceptLayers(self):
         excepted = []
