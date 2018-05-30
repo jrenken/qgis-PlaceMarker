@@ -84,7 +84,7 @@ compile: $(COMPILED_RESOURCE_FILES) $(COMPILED_UI_FILES)
 	$(LRELEASE) $<
 
 ui_%.py : %.ui
-	pyuic4 -o $@ $<
+	python -m qgis.PyQt.uic.pyuic -o $@ $<
 
 test: compile transcompile
 	@echo
