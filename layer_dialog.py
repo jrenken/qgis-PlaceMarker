@@ -23,19 +23,19 @@
 
 import os
 
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, QSettings, QFileInfo
-from PyQt4.QtGui import QDialogButtonBox, QFileDialog, QSizePolicy
-from qgis.core import QgsDataSourceURI, QgsVectorLayer, QgsMapLayerRegistry
-from pyspatialite import dbapi2 as sqlite
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, QSettings, QFileInfo
+from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox, QFileDialog, QSizePolicy
+from qgis.core import  Qgis, QgsDataSourceUri, QgsVectorLayer, QgsProject, QgsVectorLayerSimpleLabeling
+from qgis.utils import spatialite_connect
 from qgis.gui import QgsMessageBar
-from pyspatialite._spatialite import OperationalError
+from sqlite3 import OperationalError
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'layer_dialog_base.ui'))
 
 
-class LayerDialog(QtGui.QDialog, FORM_CLASS):
+class LayerDialog(QDialog, FORM_CLASS):
     '''
     Dialogue for creating a new spatialite vector layer.
     If needed a new database file can also be created.
@@ -66,10 +66,34 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
             self.mDatabaseComboBox.addItem(text)
         settings.endGroup()
         self.mOkButton = self.buttonBox.button(QDialogButtonBox.Ok)
+#         self.labeling = QgsVectorLayerSimpleLabeling()
+# 
+#         layer_settings  = QgsPalLayerSettings()
+#         text_format = QgsTextFormat()
+# 
+#         text_format.setFont(QFont("Arial", 12))
+#         text_format.setSize(12)
+# 
+#         buffer_settings = QgsTextBufferSettings()
+#         buffer_settings.setEnabled(True)
+#         buffer_settings.setSize(1)
+#         buffer_settings.setColor(QColor("white"))
+# 
+#         text_format.setBuffer(buffer_settings)
+#         layer_settings.setFormat(text_format)
+# 
+#         layer_settings.fieldName = "my_attribute"
+#         layer_settings.placement = 2
+# 
+#         layer_settings.enabled = True
+# 
+#         layer_settings = QgsVectorLayerSimpleLabeling(layer_settings)
+#         my_layer.setLabelsEnabled(True)
+#         my_layer.setLabeling(layer_settings)
 
     @pyqtSlot(name='on_toolButtonNewDatabase_clicked')
     def newDataBase(self):
-        fileName = QFileDialog.getSaveFileName(self, self.tr('New SpatiaLite Database File'), '.',
+        fileName, __ = QFileDialog.getSaveFileName(self, self.tr('New SpatiaLite Database File'), '.',
                                                self.tr('SpatiaLite') + '(*.sqlite *.db)')
         if not fileName:
             return
@@ -88,20 +112,20 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
         :rtype: bool
         '''
         try:
-            db = sqlite.connect(fileName)
+            db = spatialite_connect(fileName)
             cur = db.cursor()
         except OperationalError:
             self.bar.pushMessage(self.tr("SpatiaLite Database"), self.tr("Unable to create database file!"),
-                                 level=QgsMessageBar.CRITICAL)
+                                 level=Qgis.Critical)
             return False
 
         try:
             db.enable_load_extension(True)
         except OperationalError:
             self.bar.pushMessage(self.tr("SpatiaLite Database"), self.tr("SQLITE Load_extension off!"),
-                                 level=QgsMessageBar.INFO)
+                                 level=Qgis.Info)
 
-        cur.execute("Select initspatialmetadata(1)")
+        cur.execute("Select initspatialmetadata()")
         db.commit()
         db.close
 
@@ -116,7 +140,7 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
             settings.setValue('/SpatiaLite/connections/selected', fi.fileName() + self.tr('@') + fi.canonicalFilePath())
             settings.setValue(key, fi.canonicalFilePath())
             self.bar.pushMessage(self.tr("SpatiaLite Database"), self.tr("Registered new database!"),
-                                 level=QgsMessageBar.SUCCESS)
+                                 level=Qgis.Success)
         return True
 
     def createLayer(self):
@@ -136,7 +160,7 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
                                                          self.quotedValue('Geometry'))
 
         try:
-            db = sqlite.connect(self.mDatabaseComboBox.currentText())
+            db = spatialite_connect(self.mDatabaseComboBox.currentText())
             cur = db.cursor()
             cur.execute(sql)
             cur.execute(sqlGeom)
@@ -145,10 +169,10 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
             db.close()
         except:
             self.iface.messageBar().pushMessage(self.tr("SpatiaLite Database"), self.tr("Could not create a new layer!"),
-                                 level=QgsMessageBar.CRITICAL, duration=5)
+                                 level=Qgis.Critical, duration=5)
             return
 
-        uri = QgsDataSourceURI()
+        uri = QgsDataSourceUri()
         uri.setDatabase(self.mDatabaseComboBox.currentText())
         schema = ''
         table = self.leLayerName.text()
@@ -158,9 +182,9 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
         layer = QgsVectorLayer(uri.uri(), display_name, 'spatialite')
 
         if layer.isValid():
-            for k, v in self.DEFAULT_PROPERTIES.iteritems():
+            for k, v in self.DEFAULT_PROPERTIES.items():
                 layer.setCustomProperty(k, v)
-            QgsMapLayerRegistry.instance().addMapLayer(layer)
+            QgsProject.instance().addMapLayer(layer)
 
     def quotedIdentifier(self, idf):
         idf = idf.replace('\"', '\"\"')
@@ -178,7 +202,7 @@ class LayerDialog(QtGui.QDialog, FORM_CLASS):
     def accept(self):
         if not self.leLayerName.text():
             self.bar.pushMessage(self.tr("SpatiaLite Database"), self.tr("Need a layer name"),
-                                 level=QgsMessageBar.WARNING)
+                                 level=Qgis.Warning)
         else:
             self.createLayer()
-            QtGui.QDialog.accept(self)
+            QDialog.accept(self)

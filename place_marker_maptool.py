@@ -22,8 +22,8 @@
 """
 
 from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand
-from PyQt4.Qt import Qt
-from qgis.core import QgsPoint, QGis
+from qgis.PyQt.Qt import Qt
+from qgis.core import QgsPoint
 
 
 class PlaceMarkerMapTool(QgsMapToolEmitPoint):
@@ -37,13 +37,13 @@ class PlaceMarkerMapTool(QgsMapToolEmitPoint):
         '''
         self.canvas = canvas
         super(PlaceMarkerMapTool, self).__init__(self.canvas)
-        self.rubberBand = QgsRubberBand(self.canvas, QGis.Polygon)
+        self.rubberBand = QgsRubberBand(self.canvas, True)
         self.rubberBand.setColor(Qt.red)
         self.rubberBand.setWidth(1)
         self.reset()
 
     def reset(self):
-        self.rubberBand.reset(QGis.Polygon)
+        self.rubberBand.reset(True)
 
     def canvasReleaseEvent(self, e):
         p1 = self.canvas.getCoordinateTransform().toMapCoordinates(e.x() - 2, e.y() - 2)

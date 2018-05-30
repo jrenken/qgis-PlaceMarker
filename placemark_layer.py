@@ -20,11 +20,12 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import QVariant
+from builtins import object
+from qgis.PyQt.QtCore import QVariant
 from qgis._core import QgsVectorDataProvider, QgsField, QgsGeometry, QgsFeature
 
 
-class PlaceMarkLayer:
+class PlaceMarkLayer(object):
     '''
     classdocs
     '''
@@ -60,7 +61,7 @@ class PlaceMarkLayer:
         ''' adds a point to the layer
 
         :param pos: lat/lon position of the placemark
-        :type pos: QgsPoint
+        :type pos: QgsPointXY
 
         :param name: name of the placemark
         :type name: string
@@ -75,12 +76,12 @@ class PlaceMarkLayer:
         :type timestamp: string
         '''
         if self.hasLayer:
-            feat = QgsFeature(self.layer.pendingFields())
+            feat = QgsFeature(self.layer.fields())
             feat.setAttribute('name', name)
             feat.setAttribute('description', description)
             feat.setAttribute('class', category)
             feat.setAttribute('timestamp', timestamp)
-            feat.setGeometry(QgsGeometry.fromPoint(pos))
+            feat.setGeometry(QgsGeometry.fromPointXY(pos))
             (res, _) = self.layer.dataProvider().addFeatures([feat])
             if res:
                 self.layer.updateExtents()

@@ -8,7 +8,7 @@
 
 [general]
 name=Place Marker
-qgisMinimumVersion=2.8
+qgisMinimumVersion=3.0
 description=Place Marker provides a convenient way of adding placemarks to a vector layer.
 version=0.2
 author=Jens Renken (Marum, University of Bremen)

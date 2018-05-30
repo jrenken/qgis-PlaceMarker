@@ -20,16 +20,19 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
-from PyQt4.QtGui import QAction, QIcon
+from __future__ import absolute_import
+from builtins import object
+from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
+from qgis.PyQt.QtWidgets import QAction
+from qgis.PyQt.QtGui import QIcon
 # Initialize Qt resources from file resources.py
-import resources
+from . import resources
 # Import the code for the dialog
-from place_marker_dialog import PlaceMarkerDialog
+from .place_marker_dialog import PlaceMarkerDialog
 import os.path
 
 
-class PlaceMarker:
+class PlaceMarker(object):
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):
