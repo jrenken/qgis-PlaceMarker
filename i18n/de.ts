@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.0" language="de_DE">
+<!DOCTYPE TS><TS version="2.0" language="de_DE" sourcelanguage="">
 <context>
     <name>Dialog</name>
     <message>
@@ -85,12 +84,12 @@
 <context>
     <name>PlaceMarker</name>
     <message>
-        <location filename="place_marker.py" line="188"/>
+        <location filename="place_marker.py" line="191"/>
         <source>&amp;Place Marker</source>
         <translation>&amp;Place-Marker</translation>
     </message>
     <message>
-        <location filename="place_marker.py" line="179"/>
+        <location filename="place_marker.py" line="182"/>
         <source>Place marker</source>
         <translation>Place Marker</translation>
     </message>
@@ -98,7 +97,7 @@
 <context>
     <name>PlaceMarkerDialog</name>
     <message>
-        <location filename="place_marker_dialog.py" line="65"/>
+        <location filename="place_marker_dialog.py" line="68"/>
         <source>Remove current class</source>
         <translation>Entferne Klasse</translation>
     </message>
@@ -116,47 +115,47 @@
         <translation>Layer:</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="45"/>
+        <location filename="place_marker_dialog_base.ui" line="41"/>
         <source>...</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="71"/>
+        <location filename="place_marker_dialog_base.ui" line="67"/>
         <source>Name:</source>
         <translation>Name:</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="88"/>
+        <location filename="place_marker_dialog_base.ui" line="84"/>
         <source>Description:</source>
         <translation>Beschreibung:</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="119"/>
+        <location filename="place_marker_dialog_base.ui" line="115"/>
         <source>Position (Lat, Lon):</source>
         <translation>Position (Lat, Lon):</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="133"/>
+        <location filename="place_marker_dialog_base.ui" line="129"/>
         <source>Date/Time (UTC):</source>
         <translation>Datum/Uhrzeit(UTC):</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="102"/>
+        <location filename="place_marker_dialog_base.ui" line="98"/>
         <source>Class:</source>
         <translation>Klasse:</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="42"/>
+        <location filename="place_marker_dialog_base.ui" line="38"/>
         <source>Create new spatialite layer</source>
         <translation>Neuen Spatialite Layer erzeugen</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="54"/>
+        <location filename="place_marker_dialog_base.ui" line="50"/>
         <source>Autorefresh Layer</source>
         <translation>Layer auf Änderungen überwachen</translation>
     </message>
     <message>
-        <location filename="place_marker_dialog_base.ui" line="140"/>
+        <location filename="place_marker_dialog_base.ui" line="136"/>
         <source>dd-MM-yy HH:mm:ss</source>
         <translation>dd-MM-yy HH:mm:ss</translation>
     </message>

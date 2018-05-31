@@ -39,7 +39,7 @@ class PlaceMarkerMapTool(QgsMapToolEmitPoint):
         self.marker = QgsVertexMarker(self.canvas)
         self.marker.setColor(Qt.red)
         self.marker.setIconSize(8)
-        self.marker.setIconType(QgsVertexMarker.ICON_X) # or ICON_CROSS, ICON_X
+        self.marker.setIconType(QgsVertexMarker.ICON_X)
         self.marker.setPenWidth(2)
         self.reset()
 
