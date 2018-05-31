@@ -170,22 +170,22 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         excepted = []
         self.mMapLayerComboBox.setExceptedLayerList(excepted)
         for i in range(self.mMapLayerComboBox.count()):
-            l = self.mMapLayerComboBox.layer(i)
-            if not self.placeMarkLayer.checkLayer(l):
-                excepted.append(l)
+            layer = self.mMapLayerComboBox.layer(i)
+            if not self.placeMarkLayer.checkLayer(layer):
+                excepted.append(layer)
         self.mMapLayerComboBox.setExceptedLayerList(excepted)
 
     @pyqtSlot(name='on_repaintTimer_timeout')
     def repaintTrigger(self):
         for i in range(self.mMapLayerComboBox.count()):
-            l = self.mMapLayerComboBox.layer(i)
-            ids = l.allFeatureIds()
+            layer = self.mMapLayerComboBox.layer(i)
+            ids = layer.allFeatureIds()
             try:
-                if self.layerfeatureCount[l.id()] != len(ids):
-                    self.layerfeatureCount[l.id()] = len(ids)
-                    l.triggerRepaint()
+                if self.layerfeatureCount[layer.id()] != len(ids):
+                    self.layerfeatureCount[layer.id()] = len(ids)
+                    layer.triggerRepaint()
             except KeyError:
-                self.layerfeatureCount[l.id()] = len(ids)
+                self.layerfeatureCount[layer.id()] = len(ids)
 
     @pyqtSlot(bool, name='on_checkBoxAutoRefresh_toggled')
     def toggleAutoRefresh(self, checked):

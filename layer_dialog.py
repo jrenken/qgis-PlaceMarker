@@ -23,10 +23,11 @@
 
 import os
 
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSlot, QSettings, QFileInfo
 from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox, QFileDialog, QSizePolicy
-from qgis.core import  Qgis, QgsDataSourceUri, QgsVectorLayer, QgsProject, QgsVectorLayerSimpleLabeling
+from qgis.core import Qgis, QgsDataSourceUri, QgsVectorLayer, QgsProject
+from qgis.core import QgsVectorLayerSimpleLabeling, QgsPalLayerSettings
 from qgis.utils import spatialite_connect
 from qgis.gui import QgsMessageBar
 from sqlite3 import OperationalError
@@ -40,13 +41,6 @@ class LayerDialog(QDialog, FORM_CLASS):
     Dialogue for creating a new spatialite vector layer.
     If needed a new database file can also be created.
     '''
-
-    DEFAULT_PROPERTIES = {
-        u'labeling': u'pal',
-        u'labeling/enabled': u'true',
-        u'labeling/fieldName': u'name',
-        u'labeling/drawLabels': u'true',
-        }
 
     def __init__(self, iface, parent=None):
         '''
@@ -66,30 +60,12 @@ class LayerDialog(QDialog, FORM_CLASS):
             self.mDatabaseComboBox.addItem(text)
         settings.endGroup()
         self.mOkButton = self.buttonBox.button(QDialogButtonBox.Ok)
-#         self.labeling = QgsVectorLayerSimpleLabeling()
-# 
-#         layer_settings  = QgsPalLayerSettings()
-#         text_format = QgsTextFormat()
-# 
-#         text_format.setFont(QFont("Arial", 12))
-#         text_format.setSize(12)
-# 
-#         buffer_settings = QgsTextBufferSettings()
-#         buffer_settings.setEnabled(True)
-#         buffer_settings.setSize(1)
-#         buffer_settings.setColor(QColor("white"))
-# 
-#         text_format.setBuffer(buffer_settings)
-#         layer_settings.setFormat(text_format)
-# 
-#         layer_settings.fieldName = "my_attribute"
-#         layer_settings.placement = 2
-# 
-#         layer_settings.enabled = True
-# 
-#         layer_settings = QgsVectorLayerSimpleLabeling(layer_settings)
-#         my_layer.setLabelsEnabled(True)
-#         my_layer.setLabeling(layer_settings)
+
+        layer_settings = QgsPalLayerSettings()
+        layer_settings.fieldName = "name"
+        layer_settings.placement = QgsPalLayerSettings.Line
+        layer_settings.enabled = True
+        self.labeling = QgsVectorLayerSimpleLabeling(layer_settings)
 
     @pyqtSlot(name='on_toolButtonNewDatabase_clicked')
     def newDataBase(self):
@@ -167,7 +143,7 @@ class LayerDialog(QDialog, FORM_CLASS):
             cur.execute(sqlIndex)
             db.commit()
             db.close()
-        except:
+        except OperationalError:
             self.iface.messageBar().pushMessage(self.tr("SpatiaLite Database"), self.tr("Could not create a new layer!"),
                                  level=Qgis.Critical, duration=5)
             return
@@ -182,8 +158,8 @@ class LayerDialog(QDialog, FORM_CLASS):
         layer = QgsVectorLayer(uri.uri(), display_name, 'spatialite')
 
         if layer.isValid():
-            for k, v in self.DEFAULT_PROPERTIES.items():
-                layer.setCustomProperty(k, v)
+            layer.setLabeling(self.labeling)
+            layer.setLabelsEnabled(True)
             QgsProject.instance().addMapLayer(layer)
 
     def quotedIdentifier(self, idf):
