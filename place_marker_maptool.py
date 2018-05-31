@@ -21,9 +21,8 @@
  ***************************************************************************/
 """
 
-from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand
+from qgis.gui import QgsMapToolEmitPoint, QgsVertexMarker
 from qgis.PyQt.Qt import Qt
-from qgis.core import QgsPoint
 
 
 class PlaceMarkerMapTool(QgsMapToolEmitPoint):
@@ -37,26 +36,19 @@ class PlaceMarkerMapTool(QgsMapToolEmitPoint):
         '''
         self.canvas = canvas
         super(PlaceMarkerMapTool, self).__init__(self.canvas)
-        self.rubberBand = QgsRubberBand(self.canvas, True)
-        self.rubberBand.setColor(Qt.red)
-        self.rubberBand.setWidth(1)
+        self.marker = QgsVertexMarker(self.canvas)
+        self.marker.setColor(Qt.red)
+        self.marker.setIconSize(8)
+        self.marker.setIconType(QgsVertexMarker.ICON_X) # or ICON_CROSS, ICON_X
+        self.marker.setPenWidth(2)
         self.reset()
 
     def reset(self):
-        self.rubberBand.reset(True)
+        self.marker.hide()
 
     def canvasReleaseEvent(self, e):
-        p1 = self.canvas.getCoordinateTransform().toMapCoordinates(e.x() - 2, e.y() - 2)
-        p2 = self.canvas.getCoordinateTransform().toMapCoordinates(e.x() + 2, e.y() - 2)
-        p3 = self.canvas.getCoordinateTransform().toMapCoordinates(e.x() + 2, e.y() + 2)
-        p4 = self.canvas.getCoordinateTransform().toMapCoordinates(e.x() - 2, e.y() + 2)
-        self.reset()
-
-        self.rubberBand.addPoint(p1, False)
-        self.rubberBand.addPoint(p2, False)
-        self.rubberBand.addPoint(p3, False)
-        self.rubberBand.addPoint(p4, True)
-        self.rubberBand.show()
+        self.marker.setCenter(e.mapPoint())
+        self.marker.show()
 
     def deactivate(self):
         self.reset()
