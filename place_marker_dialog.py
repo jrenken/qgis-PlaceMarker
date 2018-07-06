@@ -26,7 +26,7 @@ import os
 from qgis.PyQt import QtGui
 from qgis.gui import QgsMapTool
 from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot, QDateTime, QByteArray, QSettings, QTimer, QModelIndex
-from qgis.core import QgsPoint, QgsCoordinateTransform, \
+from qgis.core import QgsPoint, QgsCoordinateTransform, QgsMapLayerProxyModel, \
     QgsCoordinateReferenceSystem, QgsMapLayer, QgsCoordinateFormatter
 from .layer_dialog import LayerDialog
 from .placemark_layer import PlaceMarkLayer
@@ -49,6 +49,7 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         """Constructor."""
         super(PlaceMarkerDialog, self).__init__(parent)
         self.setupUi(self)
+        self.mMapLayerComboBox.setFilters(QgsMapLayerProxyModel.PointLayer)
         hb = self.button_box.button(QDialogButtonBox.Help)
         if hb:
             hb.setDefault(False)

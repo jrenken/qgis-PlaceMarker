@@ -22,7 +22,7 @@
 """
 from builtins import object
 from qgis.PyQt.QtCore import QVariant
-from qgis._core import QgsVectorDataProvider, QgsField, QgsGeometry, QgsFeature, QgsMapLayer
+from qgis._core import QgsVectorDataProvider, QgsField, QgsGeometry, QgsFeature
 
 
 class PlaceMarkLayer(object):
@@ -102,9 +102,7 @@ class PlaceMarkLayer(object):
         :param layer: vector layer where to add the placemarks
         :type layer: QgsVectorLayer
         '''
-        if layer is None or not layer.isValid():
-            return False
-        if  not layer.type() == QgsMapLayer.VectorLayer:
+        if layer is None:
             return False
         missingFields = []
         for fieldspec in self.REQUIRED_FIELDS:

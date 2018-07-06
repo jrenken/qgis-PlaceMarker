@@ -10,7 +10,7 @@
 name=Place Marker
 qgisMinimumVersion=3.0
 description=Place Marker provides a convenient way of adding placemarks to a vector layer.
-version=0.8.0
+version=0.8.1
 author=Jens Renken (Marum, University of Bremen)
 email=renken@marum.de
 
@@ -29,7 +29,9 @@ repository=https://github.com/jrenken/qgis-PlaceMarker
 
 # Uncomment the following line and add your changelog:
 
-changelog=0.8.0 (2018-05-31)
+changelog=0.8.1 (2018-07-06)
+    - fix layer type filter 
+    0.8.0 (2018-05-31)
     - migrate to QGIS3
     0.2.0 (2016-02-26)
     - fix recursion bug when adding new layer
@@ -48,4 +50,3 @@ experimental=True
 
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
-
