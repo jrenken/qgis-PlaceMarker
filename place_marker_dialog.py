@@ -49,6 +49,7 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         """Constructor."""
         super(PlaceMarkerDialog, self).__init__(parent)
         self.setupUi(self)
+        self.placeMarkLayer = PlaceMarkLayer()
         self.mMapLayerComboBox.setFilters(QgsMapLayerProxyModel.PointLayer)
         hb = self.button_box.button(QDialogButtonBox.Help)
         if hb:
@@ -83,7 +84,6 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         self.pos = None
         self.layerId = None
         self.layerChanged = False
-        self.placeMarkLayer = PlaceMarkLayer()
         self.repaintTimer = QTimer()
         self.repaintTimer.timeout.connect(self.repaintTrigger)
         self.layerfeatureCount = dict()
