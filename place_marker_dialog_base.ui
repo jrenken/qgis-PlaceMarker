@@ -35,7 +35,7 @@
      <item>
       <widget class="QToolButton" name="toolButtonNewLayer">
        <property name="toolTip">
-        <string>Create new spatialite layer</string>
+        <string>Create new database laye</string>
        </property>
        <property name="text">
         <string>...</string>
