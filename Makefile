@@ -83,7 +83,7 @@ compile: $(COMPILED_RESOURCE_FILES) $(COMPILED_UI_FILES)
 	$(LRELEASE) $<
 
 ui_%.py : %.ui
-	python -m qgis.PyQt.uic.pyuic -o $@ $<
+	python3 -m qgis.PyQt.uic.pyuic -o $@ $<
 
 test: compile transcompile
 	@echo
@@ -106,7 +106,7 @@ test: compile transcompile
 deploy: compile doc transcompile
 	@echo
 	@echo "------------------------------------------"
-	@echo "Deploying plugin to your .qgis2 directory."
+	@echo "Deploying plugin to your .qgis3 directory."
 	@echo "------------------------------------------"
 	# The deploy  target only works on unix like operating system where
 	# the Python plugin directory is located at:

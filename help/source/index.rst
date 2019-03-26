@@ -12,10 +12,10 @@ Welcome to PlaceMarker's documentation!
 Concepts
 ==================
 Place Marker offers a convenient way of creating and handling placemarks in a vector layer. 
-The preferred dataprovider for the layer is Spatialite. This eases synchronisation of 
+The preferred dataproviders for the layer are Spatialite or PostgreSQL. This eases synchronisation of 
 placemakers over multiple running QGIS instances.
 The plugin also works with other vector data providers if the required attributes are present in the layer.
-Creation of a new layer is only supported for spatialite.
+Creation of a new layer is only supported for Spatialite and PostgreSQL.
 
 .. index:: Configuration and Operation
  
@@ -27,7 +27,7 @@ Configuration and Operation
 #. If no layer is available a new spatialite layer and a database if needed can be created by clicking on the toolbutton. The new layer contains the necessary attributes
 #. In the layer properties enable labeling and configure symbols and symbol classification
 #. To set a placemark click on the canvas. The geographic position is displayed and the time is updated. To confirm the placemark click **Apply**
-#. By checking the **Autorefresh** box the layers are checked every five seconds for modifications and will be repainted if necessary.
+#. By checking the **Autorefresh** box, the layers are checked every five seconds for modifications and will be repainted if necessary.
 
 .. index:: General Hints
 
