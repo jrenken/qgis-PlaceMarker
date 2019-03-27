@@ -179,11 +179,14 @@ class PlaceMarker(object):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
         icon_path = ':/plugins/PlaceMarker/icon.png'
-        self.add_action(
+        ma = self.add_action(
             icon_path,
             text=self.tr(u'Place marker'),
             callback=self.run,
+            checkable_flag=True,
             parent=self.iface.mainWindow())
+        if self.iface.actionPan():
+            ma.setActionGroup(self.iface.actionPan().actionGroup())
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
