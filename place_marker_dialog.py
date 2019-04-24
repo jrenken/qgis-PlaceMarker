@@ -120,7 +120,7 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
             self.button_box.button(QDialogButtonBox.Apply).setEnabled(True)
             self.mDateTimeEdit.setDateTime(QDateTime.currentDateTime().toUTC())
             self.geoPos = self.crsXform.transform(self.pos)
-            self.lineEditPosition.setText(', '.join(QgsCoordinateFormatter.format(pos,
+            self.lineEditPosition.setText(', '.join(QgsCoordinateFormatter.format(self.geoPos,
                                                            QgsCoordinateFormatter.FormatDegreesMinutes,
                                                            4).rsplit(',')[::-1]))
 
