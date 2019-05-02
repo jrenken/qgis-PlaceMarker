@@ -53,3 +53,7 @@ class PlaceMarkerMapTool(QgsMapToolEmitPoint):
     def deactivate(self):
         self.reset()
         super(PlaceMarkerMapTool, self).deactivate()
+
+    def setMarkerPosition(self, pos):
+        self.marker.setCenter(pos)
+        self.marker.show()
