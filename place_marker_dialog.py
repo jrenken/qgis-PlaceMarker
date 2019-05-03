@@ -56,6 +56,7 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         if hb:
             hb.setDefault(False)
             hb.setAutoDefault(False)
+        self.button_box.button(QDialogButtonBox.Apply).setDefault(True)
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.iface = iface
         QgsProject.instance().layersAdded.connect(self.updateLayerList)
