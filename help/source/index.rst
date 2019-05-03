@@ -26,7 +26,9 @@ Configuration and Operation
 #. Select a layer from the combobox. The available layers fullfill the necessary requirements.
 #. If no layer is available a new spatialite layer and a database if needed can be created by clicking on the toolbutton. The new layer contains the necessary attributes
 #. In the layer properties enable labeling and configure symbols and symbol classification
-#. To set a placemark click on the canvas. The geographic position is displayed and the time is updated. To confirm the placemark click **Apply**
+#. To set a placemark click on the canvas. The geographic position is displayed and the time is updated.
+   The position can be edited. Valid formats are decimal degrees, degrees/minutes and degrees/minutes/seconds with or without suffix and separated by comma.
+   To confirm the placemark click **Apply**
 #. By checking the **Autorefresh** box, the layers are checked every five seconds for modifications and will be repainted if necessary.
 
 .. index:: General Hints
