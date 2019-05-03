@@ -25,7 +25,7 @@ from builtins import range
 import os
 from qgis.PyQt import QtGui
 from qgis.gui import QgsMapTool, QgsMessageBar
-from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot, QDateTime, QByteArray, QSettings, QTimer, QModelIndex, QRegExp
+from qgis.PyQt.QtCore import Qt, pyqtSlot, QDateTime, QByteArray, QSettings, QTimer, QModelIndex, QRegExp
 from qgis.core import Qgis, QgsPointXY, QgsCoordinateTransform, QgsMapLayerProxyModel, \
     QgsCoordinateReferenceSystem, QgsMapLayer, QgsCoordinateFormatter
 from .layer_dialog import LayerDialog
@@ -40,8 +40,6 @@ REFRESH_RATE = 5000
 
 
 class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
-
-#    mouseClicked = pyqtSignal(QgsPointXY, Qt.MouseButton)
 
     DEFAULT_CLASSES = [u'Interesting', u'Danger', u'Stay away']
 
@@ -90,6 +88,9 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         self.repaintTimer = QTimer()
         self.repaintTimer.timeout.connect(self.repaintTrigger)
         self.layerfeatureCount = dict()
+        self.reDms = QRegExp('^\\s*(?:([-+nsew])\\s*)?(\\d{1,3})(?:[^0-9.]+([0-5]?\\d))?[^0-9.]+([0-5]?\\d(?:\\.\\d+)?)[^0-9.]*([-+nsew])?\\s*$',
+                     Qt.CaseInsensitive)
+        self.reDec2 = QRegExp('([+-]?\\d+\\.?\\d*\\s*),(\\s*[+-]?\\d+\\.?\\d*)')
 
     def showEvent(self, event):
         self.exceptLayers()
@@ -112,8 +113,12 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         settings.setValue(u'/Windows/PlaceMarker/geometry', self.saveGeometry())
         settings.setValue(u'PlaceMarker/CurrentClass', self.comboBoxClass.currentIndex())
         QDialog.closeEvent(self, event)
+
+    def hideEvent(self, event):
         self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
         self.lineEditPosition.setText(u'')
+        self.mapTool.reset()
+        QDialog.hideEvent(self, event)
 
     @pyqtSlot(QgsPointXY, Qt.MouseButton)
     def mouseClicked(self, pos, button):
@@ -225,92 +230,73 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
 
     @pyqtSlot(name='on_lineEditPosition_editingFinished')
     def positionEditingFinished(self):
-#        print('Return Pressed')
+        if not self.lineEditPosition.text():
+            return
         (lat, lon, ok) = self.decimalStringToDoubles(self.lineEditPosition.text())
-#        print(ok)
         if not ok:
-            coords = self.lineEditPosition.text().split(',')
+            latlon = self.lineEditPosition.text().split(',')
             try:
-                (lat, ok) = self.dmsStringToDouble(coords[0])
+                (lat, ok) = self.dmsStringToDouble(latlon[0])
                 if ok:
-                    if not -90.0 < lat <= 90.0:
-                        ok = False
-                    else:
-#                        print('lat', ok)
-                        (lon, ok) = self.dmsStringToDouble(coords[1])
-                        if ok:
-                            if not -180.0 < lon <= 180.0:
-                                ok = False
-#                        print ('lon', ok)
+                    (lon, ok) = self.dmsStringToDouble(latlon[1], 180.0)
             except IndexError:
-#                print('KeyError')
                 ok = False
 
         if ok:
-#            print('Position ok:', lat, lon)
             self.geoPos = QgsPointXY(lon, lat)
             self.pos = self.crsXform.transform(self.geoPos, QgsCoordinateTransform.ReverseTransform)
             self.mapTool.setMarkerPosition(self.pos)
-#            print(self.pos)
             self.button_box.button(QDialogButtonBox.Apply).setEnabled(True)
         else:
             self.bar.pushMessage(self.tr("Position"), self.tr("Invalid coordinate format"),
                                 level=Qgis.Warning, duration=2)
+            self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
             self.mapTool.reset()
 
     def decimalStringToDoubles(self, sYX):
-        re = QRegExp('([+-]?\\d+\\.?\\d*\\s*),(\\s*[+-]?\\d+\\.?\\d*)')
         x = 0.0
         y = 0.0
-        ok = not re.indexIn(sYX)
-#        print('dec', ok)
+        ok = not self.reDec2.indexIn(sYX)
         if not ok:
             return (y, x, ok)
 
         try:
-            y = float(re.capturedTexts()[1])
-            x = float(re.capturedTexts()[2])
+            y = float(self.reDec2.cap(1))
+            x = float(self.reDec2.cap(2))
         except ValueError:
-#            print('ValueError')
             return (y, x, False)
-#        print(y, x)
-        if not -90.0 < y <= 90.0:
-            return (y, x, False)
-
-        if not -180.0 < x <= 180.0:
+        if not -90.0 < y <= 90.0 or not -180.0 < x <= 180.0:
             return (y, x, False)
         return (y, x, ok)
 
-    def dmsStringToDouble(self, sX):
+    def dmsStringToDouble(self, sX, extend=90.0):
         negative = 'swSW-'
-        re = QRegExp('^\\s*(?:([-+nsew])\\s*)?(\\d{1,3})(?:[^0-9.]+([0-5]?\\d))?[^0-9.]+([0-5]?\\d(?:\\.\\d+)?)[^0-9.]*([-+nsew])?\\s*$',
-                     Qt.CaseInsensitive)
         x = 0.0
-        ok = not re.indexIn(sX)
-#        print(sX, ok)
+        ok = not self.reDms.indexIn(sX)
         if not ok:
             return (x, ok)
 
-        dms1 = re.capturedTexts()[2]
-        dms2 = re.capturedTexts()[3]
-        dms3 = re.capturedTexts()[4]
         try:
+            dms1 = self.reDms.cap(2)
+            dms2 = self.reDms.cap(3)
+            dms3 = self.reDms.cap(4)
             x = float(dms3)
             if dms2:
                 x = int(dms2) + x / 60.0
             x = int(dms1) + x / 60.0
+            sign1 = self.reDms.cap(1)
+            sign2 = self.reDms.cap(5)
+            if not sign1:
+                if sign2 and sign2 in negative:
+                    x = -x
+            elif not sign2:
+                if sign1 and sign1 in negative:
+                    x = -x
+            else:
+                ok = False
         except ValueError:
             return (0.0, False)
 
-        sign1 = re.capturedTexts()[1]
-        sign2 = re.capturedTexts()[5]
-
-        if not sign1:
-            if sign2 and sign2 in negative:
-                x = -x
-        elif not sign2:
-            if sign1 and sign1 in negative:
-                x = -x
-        else:
-            ok = False
+        if not -extend < x <= extend:
+            return (x, False)
         return (x, ok)

@@ -95,7 +95,7 @@
 <context>
     <name>PlaceMarker</name>
     <message>
-        <location filename="../place_marker.py" line="191"/>
+        <location filename="../place_marker.py" line="194"/>
         <source>&amp;Place Marker</source>
         <translation>&amp;Place-Marker</translation>
     </message>
@@ -108,9 +108,19 @@
 <context>
     <name>PlaceMarkerDialog</name>
     <message>
-        <location filename="../place_marker_dialog.py" line="70"/>
+        <location filename="../place_marker_dialog.py" line="71"/>
         <source>Remove current class</source>
         <translation>Entferne Klasse</translation>
+    </message>
+    <message>
+        <location filename="../place_marker_dialog.py" line="253"/>
+        <source>Position</source>
+        <translation>Position</translation>
+    </message>
+    <message>
+        <location filename="../place_marker_dialog.py" line="253"/>
+        <source>Invalid coordinate format</source>
+        <translation>Ungültiges Koordinatenformat</translation>
     </message>
 </context>
 <context>
@@ -154,11 +164,6 @@
         <location filename="../place_marker_dialog_base.ui" line="98"/>
         <source>Class:</source>
         <translation>Klasse:</translation>
-    </message>
-    <message>
-        <location filename="../ui_place_marker_dialog_base.py" line="96"/>
-        <source>Create new spatialite layer</source>
-        <translation>Neuen Spatialite Layer erzeugen</translation>
     </message>
     <message>
         <location filename="../place_marker_dialog_base.ui" line="50"/>

@@ -185,6 +185,16 @@
    <header>qgsmaplayercombobox.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>lineEditPosition</tabstop>
+  <tabstop>lineEditName</tabstop>
+  <tabstop>lineEditDescription</tabstop>
+  <tabstop>comboBoxClass</tabstop>
+  <tabstop>mDateTimeEdit</tabstop>
+  <tabstop>checkBoxAutoRefresh</tabstop>
+  <tabstop>mMapLayerComboBox</tabstop>
+  <tabstop>toolButtonNewLayer</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
