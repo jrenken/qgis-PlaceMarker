@@ -76,6 +76,7 @@ class LayerDialog(QDialog, FORM_CLASS):
         layer_settings.placement = QgsPalLayerSettings.Line
         layer_settings.enabled = True
         self.labeling = QgsVectorLayerSimpleLabeling(layer_settings)
+        self.mapTip = '<b>[% "name" %]</b><br>\n [% "description" %]<br>\n [%  to_dm( $y, \'y\', 4, \'suffix\') %], [%  to_dm( $x, \'x\', 4, \'suffix\') %]'
 
     @pyqtSlot(name='on_toolButtonNewDatabase_clicked')
     def newDataBase(self):
@@ -209,6 +210,7 @@ class LayerDialog(QDialog, FORM_CLASS):
         if layer.isValid():
             layer.setLabeling(self.labeling)
             layer.setLabelsEnabled(True)
+            layer.setMapTipTemplate(self.mapTip)
             QgsProject.instance().addMapLayer(layer)
 
     def quotedIdentifier(self, idf):
