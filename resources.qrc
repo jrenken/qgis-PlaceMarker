@@ -1,5 +1,8 @@
 <RCC>
-    <qresource prefix="/plugins/PlaceMarker" >
-        <file>icon.png</file>
-    </qresource>
+  <qresource prefix="/plugins/PlaceMarker">
+    <file>icon.png</file>
+  </qresource>
+  <qresource prefix="/plugins/PlaceMarker/Styles">
+    <file>default_style.qml</file>
+  </qresource>
 </RCC>

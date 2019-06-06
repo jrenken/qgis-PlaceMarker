@@ -68,15 +68,7 @@ class LayerDialog(QDialog, FORM_CLASS):
 
             self.mDatabaseComboBox.addItem(text)
         settings.endGroup()
-
         self.mOkButton = self.buttonBox.button(QDialogButtonBox.Ok)
-
-        layer_settings = QgsPalLayerSettings()
-        layer_settings.fieldName = "name"
-        layer_settings.placement = QgsPalLayerSettings.Line
-        layer_settings.enabled = True
-        self.labeling = QgsVectorLayerSimpleLabeling(layer_settings)
-        self.mapTip = '<b>[% "name" %]</b><br>\n [% "description" %]<br>\n [%  to_dm( $y, \'y\', 4, \'suffix\') %], [%  to_dm( $x, \'x\', 4, \'suffix\') %]'
 
     @pyqtSlot(name='on_toolButtonNewDatabase_clicked')
     def newDataBase(self):
@@ -208,9 +200,7 @@ class LayerDialog(QDialog, FORM_CLASS):
             layer = QgsVectorLayer(uri.uri(), display_name, 'spatialite')
 
         if layer.isValid():
-            layer.setLabeling(self.labeling)
-            layer.setLabelsEnabled(True)
-            layer.setMapTipTemplate(self.mapTip)
+            layer.loadNamedStyle(':/plugins/PlaceMarker/Styles/default_style.qml')
             QgsProject.instance().addMapLayer(layer)
 
     def quotedIdentifier(self, idf):
