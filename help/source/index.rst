@@ -24,20 +24,26 @@ Configuration and Operation
 
 #. Activate the dialog by clicking on the toolbutton or on the plugin menu entry.
 #. Select a layer from the combobox. The available layers fullfill the necessary requirements.
-#. If no layer is available a new spatialite layer and a database if needed can be created by clicking on the toolbutton. The new layer contains the necessary attributes
-#. In the layer properties enable labeling and configure symbols and symbol classification
-#. To set a placemark click on the canvas. The geographic position is displayed and the time is updated.
-   The position can be edited. Valid formats are decimal degrees, degrees/minutes and degrees/minutes/seconds with or without suffix and separated by comma.
+#. If desired, apply the preset style.
+#. If no layer is available, create a Spatialite or PostGIS layer and,
+   if needed, a new Spatialite database by clicking on the toolbutton.
+   The new layer contains the necessary attributes.
+#. To set a placemark, click on the canvas. The geographic position is displayed and the time is updated.
+   The position can be edited. Valid formats are decimal degrees, degrees/minutes and degrees/minutes/seconds
+   with or without suffix and separated by comma.
    To confirm the placemark click **Apply**
-#. By checking the **Autorefresh** box, the layers are checked every five seconds for modifications and will be repainted if necessary.
+#. By checking the **Autorefresh** box, the layers are checked every five seconds for modifications 
+   and will be repainted if necessary.
 
 .. index:: General Hints
 
 General Hints
 ==================
-* A basic labeling is applied to new layers. For existing layer loaded into the project, this has to be done by hand in the layer properties.
+* A basic labeling is applied to new layers.
+  For existing layer loaded into the project, this has to be done by hand in the layer properties.
 * The appearence of the symbols can be changed in the layer properties.
-* The class can be used to apply different symbols depending on the class. Select *Categorized* or *Rule-based* in the style panel of the layer properties.
+* The class can be used to apply different symbols
+  depending on the class. Select *Categorized* or *Rule-based* in the style panel of the layer properties.
 * The class combo box can be extended by additional classes. Remove a class with *CTRL-Delete*
 
 
