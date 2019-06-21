@@ -147,6 +147,10 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         dlg.show()
         dlg.exec_()
 
+    @pyqtSlot(name='on_toolButtonApplyStyle_clicked')
+    def applyPresetStyle(self):
+        self.placeMarkLayer.applyPresetStyle()
+
     @pyqtSlot(QgsMapLayer, name='on_mMapLayerComboBox_layerChanged')
     def changeLayer(self, layer):
         self.placeMarkLayer.setLayer(layer)

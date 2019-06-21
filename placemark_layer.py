@@ -118,3 +118,10 @@ class PlaceMarkLayer(object):
         if (caps & reqCaps) == reqCaps:
             return True
         return False
+
+    def applyPresetStyle(self):
+        try:
+            self.layer.loadNamedStyle(':/plugins/PlaceMarker/Styles/default_style.qml')
+            self.layer.triggerRepaint()
+        except Exception:
+            pass

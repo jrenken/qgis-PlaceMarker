@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>441</width>
-    <height>277</height>
+    <height>347</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,17 +28,34 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0">
      <item>
       <widget class="QgsMapLayerComboBox" name="mMapLayerComboBox"/>
      </item>
      <item>
       <widget class="QToolButton" name="toolButtonNewLayer">
        <property name="toolTip">
-        <string>Create new database laye</string>
+        <string>Create new database layer</string>
        </property>
        <property name="text">
         <string>...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="toolButtonApplyStyle">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Apply preset style</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>:/images/themes/default/propertyicons/stylepreset.svg</normaloff>:/images/themes/default/propertyicons/stylepreset.svg</iconset>
        </property>
       </widget>
      </item>
