@@ -23,11 +23,12 @@
 from __future__ import absolute_import
 from builtins import range
 import os
+import re
 from qgis.PyQt import QtGui
 from qgis.gui import QgsMapTool, QgsMessageBar
-from qgis.PyQt.QtCore import Qt, pyqtSlot, QDateTime, QByteArray, QSettings, QTimer, QModelIndex, QRegExp
-from qgis.core import Qgis, QgsPointXY, QgsCoordinateTransform, QgsMapLayerProxyModel, \
-    QgsCoordinateReferenceSystem, QgsMapLayer, QgsCoordinateFormatter
+from qgis.PyQt.QtCore import Qt, QObject, pyqtSlot, QDateTime, QByteArray, QSettings, QTimer, QModelIndex, QRegExp
+from qgis.core import Qgis, QgsPointXY, QgsCoordinateTransform, QgsMapLayerProxyModel
+from qgis.core import QgsCoordinateReferenceSystem, QgsMapLayer, QgsCoordinateFormatter as cf
 from .layer_dialog import LayerDialog
 from .placemark_layer import PlaceMarkLayer
 from qgis.core import QgsProject
@@ -89,9 +90,15 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         self.repaintTimer = QTimer()
         self.repaintTimer.timeout.connect(self.repaintTrigger)
         self.layerfeatureCount = dict()
-        self.reDms = QRegExp('^\\s*(?:([-+nsew])\\s*)?(\\d{1,3})(?:[^0-9.]+([0-5]?\\d))?[^0-9.]+([0-5]?\\d(?:\\.\\d+)?)[^0-9.]*([-+nsew])?\\s*$',
-                     Qt.CaseInsensitive)
-        self.reDec2 = QRegExp('([+-]?\\d+\\.?\\d*\\s*),(\\s*[+-]?\\d+\\.?\\d*)')
+        tr = QObject()
+        self.negative = tr.tr('S') + tr.tr('W') + '-'
+        hemis = tr.tr('N') + tr.tr('S') + tr.tr('E') + tr.tr('W')
+        self.reDms = QRegExp('^\\s*(?:([-+{0}])\\s*)?(\\d{{1,3}})(?:[^0-9.]+([0-5]?\\d))?[^0-9.]+([0-5]?\\d(?:[\\.,]\\d+)?)[^0-9.]*([-+{0}])?\\s*$'
+                             .format(hemis), Qt.CaseInsensitive)
+        self.reDec2 = QRegExp('([+-]?\\d+\\.?\\d*)[\\.,\\s]+([+-]?\\d+\\.?\\d*)')
+        self.coordFmt = (cf.FormatDegreesMinutes,
+                         cf.FlagDegreesUseStringSuffix)
+        self.sep = cf.separator() + ' '
 
     def showEvent(self, event):
         self.exceptLayers()
@@ -107,6 +114,7 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         refresh = settings.value(u'PlaceMarker/AutoRefreshLayer', False, type=bool)
         self.comboBoxClass.setCurrentIndex(settings.value(u'PlaceMarker/CurrentClass', 0, type=int))
         self.checkBoxAutoRefresh.setChecked(refresh)
+        self.lineEditPosition.setFocus()
         QDialog.showEvent(self, event)
 
     def closeEvent(self, event):
@@ -129,9 +137,10 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
             self.button_box.button(QDialogButtonBox.Apply).setEnabled(True)
             self.mDateTimeEdit.setDateTime(QDateTime.currentDateTime().toUTC())
             self.geoPos = self.crsXform.transform(self.pos)
-            self.lineEditPosition.setText(', '.join(QgsCoordinateFormatter.format(self.geoPos,
-                                                           QgsCoordinateFormatter.FormatDegreesMinutes,
-                                                           4).rsplit(',')[::-1]))
+            self.lineEditPosition.setText(self.sep.join(
+                (cf.formatY(self.geoPos.y(), self.coordFmt[0], 4, self.coordFmt[1]),
+                 cf.formatX(self.geoPos.x(), self.coordFmt[0], 4, self.coordFmt[1]))))
+            self.lineEditName.setFocus()
 
     @pyqtSlot()
     def changeCrs(self):
@@ -173,10 +182,10 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
                 if res:
                     self.placeMarkLayer.layer.triggerRepaint()
                 self.mapTool.reset()
+                self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
             if self.layerChanged and self.placeMarkLayer.layer:
                 settings = QSettings()
                 settings.setValue(u'PlaceMarker/LayerId', self.placeMarkLayer.layer.id())
-            self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
         elif self.button_box.buttonRole(button) == QDialogButtonBox.RejectRole:
             self.mapTool.reset()
 
@@ -237,13 +246,16 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
     def positionEditingFinished(self):
         if not self.lineEditPosition.text():
             return
-        (lat, lon, ok) = self.decimalStringToDoubles(self.lineEditPosition.text())
+        posText = self.lineEditPosition.text().upper()
+        (lat, lon, ok) = self.decimalStringToDoubles(posText.replace(',', '.'))
         if not ok:
-            latlon = self.lineEditPosition.text().split(',')
+            latlon = re.split(r'[,\s]+', posText)
+            if len(latlon) > 2:
+                latlon = re.split(r'\s+', posText)
             try:
-                (lat, ok) = self.dmsStringToDouble(latlon[0])
+                (lat, ok) = self.dmsStringToDouble(latlon[0].replace(',', '.'))
                 if ok:
-                    (lon, ok) = self.dmsStringToDouble(latlon[1], 180.0)
+                    (lon, ok) = self.dmsStringToDouble(latlon[1].replace(',', '.'), 180.0)
             except IndexError:
                 ok = False
 
@@ -266,8 +278,8 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
             return (y, x, ok)
 
         try:
-            y = float(self.reDec2.cap(1))
-            x = float(self.reDec2.cap(2))
+            y = float(self.reDec2.cap(1).replace(',', '.'))
+            x = float(self.reDec2.cap(2).replace(',', '.'))
         except ValueError:
             return (y, x, False)
         if not -90.0 < y <= 90.0 or not -180.0 < x <= 180.0:
@@ -275,7 +287,6 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         return (y, x, ok)
 
     def dmsStringToDouble(self, sX, extend=90.0):
-        negative = 'swSW-'
         x = 0.0
         ok = not self.reDms.indexIn(sX)
         if not ok:
@@ -292,10 +303,10 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
             sign1 = self.reDms.cap(1)
             sign2 = self.reDms.cap(5)
             if not sign1:
-                if sign2 and sign2 in negative:
+                if sign2 and sign2 in self.negative:
                     x = -x
             elif not sign2:
-                if sign1 and sign1 in negative:
+                if sign1 and sign1 in self.negative:
                     x = -x
             else:
                 ok = False
