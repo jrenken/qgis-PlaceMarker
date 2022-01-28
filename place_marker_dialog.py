@@ -20,8 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from __future__ import absolute_import
-from builtins import range
+
 import os
 import re
 from qgis.PyQt import QtGui
@@ -80,7 +79,7 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         self.comboBoxClass.model().rowsInserted.connect(self.classChanged)
         self.comboBoxClass.model().rowsRemoved.connect(self.classChanged)
         self.crsXform = QgsCoordinateTransform()
-        self.crsXform.setDestinationCrs(QgsCoordinateReferenceSystem(4326))
+        self.crsXform.setDestinationCrs(QgsCoordinateReferenceSystem('EPSG:4326'))
         self.changeCrs()
         self.iface.mapCanvas().destinationCrsChanged.connect(self.changeCrs)
         self.iface.mapCanvas().mapToolSet[QgsMapTool, QgsMapTool].connect(self.mapToolChanged)
@@ -95,10 +94,12 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         hemis = tr.tr('N') + tr.tr('S') + tr.tr('E') + tr.tr('W')
         self.reDms = QRegExp('^\\s*(?:([-+{0}])\\s*)?(\\d{{1,3}})(?:[^0-9.]+([0-5]?\\d))?[^0-9.]+([0-5]?\\d(?:[\\.,]\\d+)?)[^0-9.]*([-+{0}])?\\s*$'
                              .format(hemis), Qt.CaseInsensitive)
-        self.reDec2 = QRegExp('([+-]?\\d+\\.?\\d*)[\\.,\\s]+([+-]?\\d+\\.?\\d*)')
-        self.coordFmt = (cf.FormatDegreesMinutes,
-                         cf.FlagDegreesUseStringSuffix)
-        self.sep = cf.separator() + ' '
+        self.reDec2 = QRegExp('([+-]?\\d+\\.?\\d*)\\D*[\\.,\\s]+([+-]?\\d+\\.?\\d*)\\D*')
+        self.coordFmt = (cf.FormatDegreesMinutes, cf.FlagDegreesUseStringSuffix)
+        try:
+            self.sep = cf.separator() + ' '
+        except AttributeError:
+            self.sep = ', '
 
     def showEvent(self, event):
         self.exceptLayers()

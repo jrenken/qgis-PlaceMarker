@@ -115,7 +115,7 @@ class PlaceMarkLayer(object):
 
         caps = layer.dataProvider().capabilities()
         reqCaps = (QgsVectorDataProvider.AddFeatures | QgsVectorDataProvider.DeleteFeatures)
-        if (caps & reqCaps) == reqCaps:
+        if (int(caps) & int(reqCaps)) == reqCaps:
             return True
         return False
 
