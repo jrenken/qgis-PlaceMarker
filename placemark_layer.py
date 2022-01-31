@@ -114,10 +114,7 @@ class PlaceMarkLayer(object):
             return False
 
         caps = layer.dataProvider().capabilities()
-        reqCaps = (QgsVectorDataProvider.AddFeatures | QgsVectorDataProvider.DeleteFeatures)
-        if (int(caps) & int(reqCaps)) == reqCaps:
-            return True
-        return False
+        return caps & QgsVectorDataProvider.AddFeatures and caps & QgsVectorDataProvider.DeleteFeatures
 
     def applyPresetStyle(self):
         try:
