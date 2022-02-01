@@ -10,7 +10,7 @@
 name=Place Marker
 qgisMinimumVersion=3.0
 description=Place Marker provides a convenient way of adding placemarks to a vector layer.
-version=1.2.0
+version=1.2.1
 author=Jens Renken (Marum, University of Bremen)
 email=renken@marum.de
 
@@ -29,7 +29,10 @@ repository=https://github.com/jrenken/qgis-PlaceMarker
 
 # Uncomment the following line and add your changelog:
 
-changelog=1.2.0 (2019-06-21)
+changelog=1.2.1 (2022-02-01)
+    - update coordinate formatting and parsing to current API
+    - fix backward compatibility issues
+  1.2.0 (2019-06-21)
     - apply a preset style to newly created layers and provide a button to do this for existing layers.
   1.1.0 (2019-05-03)
     - allow to set and edit the marker position in the dialog
