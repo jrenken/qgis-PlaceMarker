@@ -148,12 +148,10 @@ class LayerDialog(QDialog, FORM_CLASS):
                     if valid:
                         QgsCredentials.instance().put(realm, usr, pw)
                         db = psycopg2.connect(dbname=dbn[0], host=dbn[1], user=usr, password=pw)
-                        print('ok')
                         cur = db.cursor()
                         cur.execute(sql)
                         cur.execute(sqlGeom)
                         db.commit()
-                        print(sqlIndex)
                         db.commit()
                         db.close()
                         break
