@@ -47,7 +47,8 @@ PY_FILES = \
 	place_marker_dialog.py \
 	layer_dialog.py \
 	placemark_layer.py \
-	place_marker_maptool.py
+	place_marker_maptool.py \
+	droplineedit.py
 
 UI_FILES = layer_dialog_base.ui
 
