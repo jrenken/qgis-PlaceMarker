@@ -86,6 +86,7 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         self.pos = None
         self.layerId = None
         self.layerChanged = False
+        self.mMapLayerComboBox.layerChanged.connect(self.changeLayer)
         self.repaintTimer = QTimer()
         self.repaintTimer.timeout.connect(self.repaintTrigger)
         self.layerfeatureCount = dict()
@@ -161,7 +162,7 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
     def applyPresetStyle(self):
         self.placeMarkLayer.applyPresetStyle()
 
-    @pyqtSlot(QgsMapLayer, name='on_mMapLayerComboBox_layerChanged')
+    # @pyqtSlot(QgsMapLayer, name='on_mMapLayerComboBox_layerChanged')
     def changeLayer(self, layer):
         self.placeMarkLayer.setLayer(layer)
         self.layerChanged = True
