@@ -24,6 +24,7 @@
 from qgis.PyQt.QtWidgets import QLineEdit
 from qgis.PyQt.QtCore import Qt
 
+
 class DropLineEdit(QLineEdit):
     '''
     QLineEdit that overwrites the current content when dropping with shift pressed
@@ -31,7 +32,5 @@ class DropLineEdit(QLineEdit):
 
     def dropEvent(self, e):
         if e.keyboardModifiers() & Qt.ShiftModifier:
-            self.setText(e.mimeData().text())
-            e.acceptProposedAction()
-        else:
-            super(DropLineEdit, self).dropEvent(e)
+            self.clear()
+        super(DropLineEdit, self).dropEvent(e)
