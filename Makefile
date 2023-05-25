@@ -50,7 +50,7 @@ PY_FILES = \
 	place_marker_maptool.py \
 	droplineedit.py
 
-UI_FILES = layer_dialog_base.ui
+UI_FILES = layer_dialog_base.ui place_marker_dialog_base.ui
 
 COMPILED_UI_FILES = ui_place_marker_dialog_base.py
 

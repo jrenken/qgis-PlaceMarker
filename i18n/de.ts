@@ -2,6 +2,29 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="de_DE">
 <context>
+    <name>@default</name>
+    <message>
+        <location filename="../place_marker_dialog.py" line="95"/>
+        <source>S</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../place_marker_dialog.py" line="95"/>
+        <source>W</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../place_marker_dialog.py" line="95"/>
+        <source>N</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../place_marker_dialog.py" line="95"/>
+        <source>E</source>
+        <translation>O</translation>
+    </message>
+</context>
+<context>
     <name>Dialog</name>
     <message>
         <location filename="../layer_dialog_base.ui" line="14"/>
@@ -52,7 +75,7 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../layer_dialog.py" line="190"/>
+        <location filename="../layer_dialog.py" line="188"/>
         <source>SpatiaLite Database</source>
         <translation>SpatiaLite Datenbank</translation>
     </message>
@@ -62,7 +85,7 @@
         <translation>Neue Datenbank registriert!</translation>
     </message>
     <message>
-        <location filename="../layer_dialog.py" line="222"/>
+        <location filename="../layer_dialog.py" line="219"/>
         <source>Need a layer name</source>
         <translation>Layer Name wird benötigt</translation>
     </message>
@@ -77,17 +100,17 @@
         <translation>SQLITE Load_extension off!</translation>
     </message>
     <message>
-        <location filename="../layer_dialog.py" line="190"/>
+        <location filename="../layer_dialog.py" line="188"/>
         <source>Could not create a new layer!</source>
         <translation>Neuer Layer konnte nicht angelegt werden!</translation>
     </message>
     <message>
-        <location filename="../layer_dialog.py" line="163"/>
+        <location filename="../layer_dialog.py" line="161"/>
         <source>PostGIS Database</source>
         <translation>PostGIS Datenbank</translation>
     </message>
     <message>
-        <location filename="../layer_dialog.py" line="222"/>
+        <location filename="../layer_dialog.py" line="219"/>
         <source>Database</source>
         <translation>Datenbank</translation>
     </message>
@@ -113,12 +136,12 @@
         <translation>Entferne Klasse</translation>
     </message>
     <message>
-        <location filename="../place_marker_dialog.py" line="256"/>
+        <location filename="../place_marker_dialog.py" line="270"/>
         <source>Position</source>
         <translation>Position</translation>
     </message>
     <message>
-        <location filename="../place_marker_dialog.py" line="256"/>
+        <location filename="../place_marker_dialog.py" line="270"/>
         <source>Invalid coordinate format</source>
         <translation>Ungültiges Koordinatenformat</translation>
     </message>
@@ -151,12 +174,12 @@
         <translation>Beschreibung:</translation>
     </message>
     <message>
-        <location filename="../place_marker_dialog_base.ui" line="132"/>
+        <location filename="../place_marker_dialog_base.ui" line="135"/>
         <source>Position (Lat, Lon):</source>
         <translation>Position (Lat, Lon):</translation>
     </message>
     <message>
-        <location filename="../place_marker_dialog_base.ui" line="146"/>
+        <location filename="../place_marker_dialog_base.ui" line="152"/>
         <source>Date/Time (UTC):</source>
         <translation>Datum/Uhrzeit(UTC):</translation>
     </message>
@@ -171,7 +194,7 @@
         <translation>Layer auf Änderungen überwachen</translation>
     </message>
     <message>
-        <location filename="../place_marker_dialog_base.ui" line="153"/>
+        <location filename="../place_marker_dialog_base.ui" line="159"/>
         <source>dd-MM-yy HH:mm:ss</source>
         <translation>dd-MM-yy HH:mm:ss</translation>
     </message>
@@ -184,6 +207,16 @@
         <location filename="../place_marker_dialog_base.ui" line="54"/>
         <source>Apply preset style</source>
         <translation>Vorgabestil auf den gewählten Layer anwenden</translation>
+    </message>
+    <message>
+        <location filename="../place_marker_dialog_base.ui" line="122"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hit Enter to make Class persistant.&lt;/p&gt;&lt;p&gt;Delete a class with Ctrl-Del.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter drücken, um die Klasse permanent in die Liste zu übernehmen.&lt;/p&gt;&lt;p&gt;Löschen mit Ctrl-Del.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../place_marker_dialog_base.ui" line="142"/>
+        <source>Hold shift key for adding drop content</source>
+        <translation>Shift Taste gedrückt halten, um Text hinzuzufügen</translation>
     </message>
 </context>
 </TS>
