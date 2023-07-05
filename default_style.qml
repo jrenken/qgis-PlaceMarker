@@ -110,6 +110,7 @@
     <constraint field="longitude" desc="" exp=""/>
   </constraintExpressions>
   <expressionfields>
+    <field type="2" comment="" expression="@id" length="0" typeName="integer" precision="0" name="pkuid" subType="0"/>
     <field type="10" comment="" expression="to_dm($y, 'y', 4, 'suffix')" length="0" typeName="string" precision="0" name="latitude" subType="0"/>
     <field type="10" comment="" expression="to_dm($x, 'x', 4, 'suffix')" length="0" typeName="string" precision="0" name="longitude" subType="0"/>
   </expressionfields>

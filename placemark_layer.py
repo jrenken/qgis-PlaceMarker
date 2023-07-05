@@ -22,7 +22,7 @@
 """
 from builtins import object
 from qgis.PyQt.QtCore import QVariant
-from qgis._core import QgsVectorDataProvider, QgsField, QgsGeometry, QgsFeature
+from qgis.core import QgsVectorDataProvider, QgsFields, QgsField, QgsGeometry, QgsFeature
 
 
 class PlaceMarkLayer(object):
@@ -30,8 +30,7 @@ class PlaceMarkLayer(object):
     classdocs
     '''
 
-    REQUIRED_FIELDS = [['pkuid', QVariant.Int],
-                       ['name', QVariant.String],
+    REQUIRED_FIELDS = [['name', QVariant.String],
                        ['description', QVariant.String],
                        ['class', QVariant.String],
                        ['timestamp', QVariant.String]]
@@ -46,7 +45,7 @@ class PlaceMarkLayer(object):
         self.setLayer(layer)
 
     def setLayer(self, layer):
-        ''' assign a layer. Before check if the requirements are fulffilled
+        ''' assign a layer. Before check if the requirements are fullfilled
         :param layer: a vector layer
         '''
         self.layer = None
@@ -81,6 +80,11 @@ class PlaceMarkLayer(object):
             feat.setAttribute('class', category)
             feat.setAttribute('timestamp', timestamp)
             feat.setGeometry(QgsGeometry.fromPointXY(pos))
+            attCnt = self.layer.fields().size()
+            for i in range(attCnt):
+                if self.layer.fields().fieldOrigin(i) == QgsFields.OriginExpression:
+                    attCnt -= 1
+            feat.resizeAttributes(attCnt)
             (res, _) = self.layer.dataProvider().addFeatures([feat])
             if res:
                 self.layer.updateExtents()

@@ -24,10 +24,9 @@
 import os
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import pyqtSlot, QSettings, QFileInfo
+from qgis.PyQt.QtCore import pyqtSlot, QSettings, QFileInfo, QVariant
 from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox, QFileDialog, QSizePolicy
-from qgis.core import Qgis, QgsDataSourceUri, QgsVectorLayer, QgsProject
-from qgis.core import QgsVectorLayerSimpleLabeling, QgsPalLayerSettings
+from qgis.core import Qgis, QgsDataSourceUri, QgsVectorLayer, QgsProject, QgsField
 from qgis.utils import spatialite_connect
 from qgis.gui import QgsMessageBar
 from sqlite3 import OperationalError
@@ -68,6 +67,7 @@ class LayerDialog(QDialog, FORM_CLASS):
 
             self.mDatabaseComboBox.addItem(text)
         settings.endGroup()
+        self.mDatabaseComboBox.addItem(self.tr("Temporary Scratch Layer"))
         self.mOkButton = self.buttonBox.button(QDialogButtonBox.Ok)
 
     @pyqtSlot(name='on_toolButtonNewDatabase_clicked')
@@ -170,7 +170,7 @@ class LayerDialog(QDialog, FORM_CLASS):
             display_name = self.leLayerName.text()
             layer = QgsVectorLayer(uri.uri(), display_name, 'postgres')
 
-        else:
+        elif os.path.splitext(self.mDatabaseComboBox.currentText())[1] == '.sqlite':
             sql = u'create table ' + self.quotedIdentifier(self.leLayerName.text()) + '('
             sql += u'pkuid integer primary key autoincrement,'
             sql += u'name text,description text,class text, timestamp text)'
@@ -196,6 +196,13 @@ class LayerDialog(QDialog, FORM_CLASS):
             uri.setDataSource(schema, table, geom_column)
             display_name = self.leLayerName.text()
             layer = QgsVectorLayer(uri.uri(), display_name, 'spatialite')
+
+        else:
+            uri = 'point?crs=epsg:4326&field=name:string' \
+                    '&field=description:string' \
+                    '&field=class:string' \
+                    '&field=timestamp:string'
+            layer = QgsVectorLayer(uri, self.leLayerName.text(), 'memory')
 
         if layer.isValid():
             layer.loadNamedStyle(':/plugins/PlaceMarker/Styles/default_style.qml')

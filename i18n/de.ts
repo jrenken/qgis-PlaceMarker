@@ -85,7 +85,7 @@
         <translation>Neue Datenbank registriert!</translation>
     </message>
     <message>
-        <location filename="../layer_dialog.py" line="219"/>
+        <location filename="../layer_dialog.py" line="226"/>
         <source>Need a layer name</source>
         <translation>Layer Name wird benötigt</translation>
     </message>
@@ -110,9 +110,14 @@
         <translation>PostGIS Datenbank</translation>
     </message>
     <message>
-        <location filename="../layer_dialog.py" line="219"/>
+        <location filename="../layer_dialog.py" line="226"/>
         <source>Database</source>
         <translation>Datenbank</translation>
+    </message>
+    <message>
+        <location filename="../layer_dialog.py" line="70"/>
+        <source>Temporary Scratch Layer</source>
+        <translation>Temporärlayer</translation>
     </message>
 </context>
 <context>
@@ -211,7 +216,7 @@
     <message>
         <location filename="../place_marker_dialog_base.ui" line="122"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hit Enter to make Class persistant.&lt;/p&gt;&lt;p&gt;Delete a class with Ctrl-Del.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter drücken, um die Klasse permanent in die Liste zu übernehmen.&lt;/p&gt;&lt;p&gt;Löschen mit Ctrl-Del.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&amp;lt;html&amp;gt;&amp;lt;head/&amp;gt;&amp;lt;body&amp;gt;&amp;lt;p&amp;gt;Enter drücken, um die Klasse permanent in die Liste zu übernehmen.&amp;lt;/p&amp;gt;&amp;lt;p&amp;gt;Löschen mit Ctrl-Del.&amp;lt;/p&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;</translation>
     </message>
     <message>
         <location filename="../place_marker_dialog_base.ui" line="142"/>
