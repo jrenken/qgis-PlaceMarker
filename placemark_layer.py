@@ -51,7 +51,11 @@ class PlaceMarkLayer(object):
         self.layer = None
         self.hasLayer = False
         layerOk = self.checkLayer(layer)
+        self.attributeCount = 0
         if layerOk:
+            for i in range(layer.fields().size()):
+                if layer.fields().fieldOrigin(i) in (QgsFields.OriginProvider, QgsFields.OriginEdit):
+                    self.attributeCount += 1
             self.layer = layer
             self.hasLayer = True
 
@@ -75,16 +79,12 @@ class PlaceMarkLayer(object):
         '''
         if self.hasLayer:
             feat = QgsFeature(self.layer.fields())
+            feat.initAttributes(self.attributeCount)
             feat.setAttribute('name', name)
             feat.setAttribute('description', description)
             feat.setAttribute('class', category)
             feat.setAttribute('timestamp', timestamp)
             feat.setGeometry(QgsGeometry.fromPointXY(pos))
-            attCnt = self.layer.fields().size()
-            for i in range(attCnt):
-                if self.layer.fields().fieldOrigin(i) == QgsFields.OriginExpression:
-                    attCnt -= 1
-            feat.resizeAttributes(attCnt)
             (res, _) = self.layer.dataProvider().addFeatures([feat])
             if res:
                 self.layer.updateExtents()
