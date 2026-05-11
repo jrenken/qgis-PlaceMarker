@@ -31,6 +31,6 @@ class DropLineEdit(QLineEdit):
     '''
 
     def dropEvent(self, e):
-        if not e.keyboardModifiers() & Qt.ShiftModifier:
+        if not e.modifiers() & Qt.KeyboardModifier.ShiftModifier:
             self.clear()
         super(DropLineEdit, self).dropEvent(e)

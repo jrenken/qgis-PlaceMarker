@@ -56,9 +56,9 @@ COMPILED_UI_FILES = ui_place_marker_dialog_base.py
 
 EXTRAS = metadata.txt icon.png
 
-COMPILED_RESOURCE_FILES = resources.py
+COMPILED_RESOURCE_FILES = resources_rc.py
 
-PEP8EXCLUDE=pydev,resources.py,conf.py,third_party,ui
+PEP8EXCLUDE=pydev,resources_rc.py,conf.py,third_party,ui
 
 
 #################################################
@@ -71,14 +71,14 @@ PLUGIN_UPLOAD = $(c)/plugin_upload.py
 
 RESOURCE_SRC=$(shell grep '^ *<file' resources.qrc | sed 's@</file>@@g;s/.*>//g' | tr '\n' ' ')
 
-QGISDIR=.local/share/QGIS/QGIS3/profiles/default
+QGISDIR=.local/share/QGIS/QGIS4/profiles/default
 
 default: compile
 
 compile: $(COMPILED_RESOURCE_FILES) $(COMPILED_UI_FILES)
 
-%.py : %.qrc $(RESOURCES_SRC)
-	pyrcc5 -o $*.py  $<
+%_rc.py : %.qrc $(RESOURCES_SRC)
+	rcc -g python $< | sed '0,/PySide[2-6]/s//qgis.PyQt/' > $*_rc.py
 
 %.qm : %.ts
 	$(LRELEASE) $<
@@ -107,7 +107,7 @@ test: compile transcompile
 deploy: compile doc transcompile
 	@echo
 	@echo "------------------------------------------"
-	@echo "Deploying plugin to your .qgis3 directory."
+	@echo "Deploying plugin to your .qgis4 directory."
 	@echo "------------------------------------------"
 	# The deploy  target only works on unix like operating system where
 	# the Python plugin directory is located at:

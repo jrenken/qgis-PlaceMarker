@@ -20,16 +20,15 @@
  *                                                                         *
  ***************************************************************************/
 """
-from __future__ import absolute_import
-from builtins import object
+
+import os.path
 from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from qgis.PyQt.QtWidgets import QAction
 from qgis.PyQt.QtGui import QIcon
 # Initialize Qt resources from file resources.py
-from . import resources
+from .resources_rc import *
 # Import the code for the dialog
 from .place_marker_dialog import PlaceMarkerDialog
-import os.path
 
 
 class PlaceMarker(object):

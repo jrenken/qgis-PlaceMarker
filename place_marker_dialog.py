@@ -23,16 +23,35 @@
 
 import os
 import re
-from qgis.PyQt import QtGui
+from qgis.PyQt import QtGui, QtWidgets
 from qgis.gui import QgsMapTool, QgsMessageBar
-from qgis.PyQt.QtCore import Qt, QObject, pyqtSlot, QDateTime, QByteArray, QSettings, QTimer, QModelIndex, QRegExp
-from qgis.core import Qgis, QgsPointXY, QgsCoordinateTransform, QgsMapLayerProxyModel
-from qgis.core import QgsCoordinateReferenceSystem, QgsMapLayer, QgsCoordinateFormatter as cf
+from qgis.PyQt.QtCore import (
+    Qt,
+    QObject,
+    pyqtSlot,
+    QDateTime,
+    QByteArray,
+    QSettings,
+    QTimer,
+    QModelIndex,
+    QRegularExpression,)
+from qgis.core import (
+    Qgis,
+    QgsPointXY,
+    QgsCoordinateTransform,
+    QgsMapLayerProxyModel,
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateFormatter as cf,
+    QgsProject)
+from qgis.PyQt.QtWidgets import (
+    QDialog,
+    QDialogButtonBox,
+    QAbstractButton,
+    QAction,
+    QSizePolicy)
+from qgis.PyQt.QtGui import QKeySequence
 from .layer_dialog import LayerDialog
 from .placemark_layer import PlaceMarkLayer
-from qgis.core import QgsProject
-from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox, QAbstractButton, QAction, QSizePolicy
-from qgis.PyQt.QtGui import QKeySequence
 from .ui_place_marker_dialog_base import Ui_PlaceMarkerDialogBase
 from .place_marker_maptool import PlaceMarkerMapTool
 
@@ -48,16 +67,16 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         super(PlaceMarkerDialog, self).__init__(parent)
         self.setupUi(self)
         self.bar = QgsMessageBar(self)
-        self.bar.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
+        self.bar.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Maximum)
         self.layout().insertRow(self.layout().rowCount() - 1, self.bar)
         self.placeMarkLayer = PlaceMarkLayer()
         self.mMapLayerComboBox.setFilters(QgsMapLayerProxyModel.PointLayer)
-        hb = self.button_box.button(QDialogButtonBox.Help)
+        hb = self.button_box.button(QDialogButtonBox.StandardButton.Help)
         if hb:
             hb.setDefault(False)
             hb.setAutoDefault(False)
-        self.button_box.button(QDialogButtonBox.Apply).setDefault(True)
-        self.setWindowFlags(Qt.WindowStaysOnTopHint)
+        self.button_box.button(QDialogButtonBox.StandardButton.Apply).setDefault(True)
+        self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
         self.iface = iface
         QgsProject.instance().layersAdded.connect(self.updateLayerList)
         settings = QSettings()
@@ -70,10 +89,10 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
             self.comboBoxClass.addItems(self.DEFAULT_CLASSES)
 
         delClassAction = QAction(self.tr(u'Remove current class'), self.comboBoxClass)
-        delClassAction.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_Delete))
+        delClassAction.setShortcut(QKeySequence(Qt.KeyboardModifier.ControlModifier | Qt.Key.Key_Delete))
         delClassAction.triggered.connect(self.removeClass)
         self.comboBoxClass.addAction(delClassAction)
-        self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
+        self.button_box.button(QDialogButtonBox.StandardButton.Apply).setEnabled(False)
         self.mapTool = PlaceMarkerMapTool(self.iface.mapCanvas())
         self.mapTool.canvasClicked.connect(self.mouseClicked)
         self.comboBoxClass.model().rowsInserted.connect(self.classChanged)
@@ -93,9 +112,9 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         tr = QObject()
         self.negative = tr.tr('S') + tr.tr('W') + '-'
         hemis = tr.tr('N') + tr.tr('S') + tr.tr('E') + tr.tr('W')
-        self.reDms = QRegExp('^\\s*(?:([-+{0}])\\s*)?(\\d{{1,3}})(?:[^0-9.]+([0-5]?\\d))?[^0-9.]+([0-5]?\\d(?:[\\.,]\\d+)?)[^0-9.]*([-+{0}])?\\s*$'
-                             .format(hemis), Qt.CaseInsensitive)
-        self.reDec2 = QRegExp('([+-]?\\d+\\.?\\d*)\\D*[\\.,\\s]+([+-]?\\d+\\.?\\d*)\\D*')
+        self.reDms = QRegularExpression('^\\s*(?:([-+{0}])\\s*)?(\\d{{1,3}})(?:[^0-9.]+([0-5]?\\d))?[^0-9.]+([0-5]?\\d(?:[\\.,]\\d+)?)[^0-9.]*([-+{0}])?\\s*$'
+                             .format(hemis), QRegularExpression.PatternOption.CaseInsensitiveOption)
+        self.reDec2 = QRegularExpression('([+-]?\\d+\\.?\\d*)\\D*[\\.,\\s]+([+-]?\\d+\\.?\\d*)\\D*')
         self.coordFmt = (cf.FormatDegreesMinutes, cf.FlagDegreesUseStringSuffix)
         try:
             self.sep = cf.separator() + ' '
@@ -126,17 +145,17 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         QDialog.closeEvent(self, event)
 
     def hideEvent(self, event):
-        self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
+        self.button_box.button(QDialogButtonBox.StandardButton.Apply).setEnabled(False)
         self.lineEditPosition.setText(u'')
         self.mapTool.reset()
         QDialog.hideEvent(self, event)
 
     @pyqtSlot(QgsPointXY, Qt.MouseButton)
     def mouseClicked(self, pos, button):
-        if button == Qt.LeftButton:
+        if button == Qt.MouseButton.LeftButton:
             self.show()
             self.pos = pos
-            self.button_box.button(QDialogButtonBox.Apply).setEnabled(True)
+            self.button_box.button(QDialogButtonBox.StandardButton.Apply).setEnabled(True)
             self.mDateTimeEdit.setDateTime(QDateTime.currentDateTime().toUTC())
             self.geoPos = self.crsXform.transform(self.pos)
             self.lineEditPosition.setText(self.sep.join(
@@ -156,7 +175,7 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
     def newLayer(self):
         dlg = LayerDialog(self.iface, self)
         dlg.show()
-        dlg.exec_()
+        dlg.exec()
 
     @pyqtSlot(name='on_toolButtonApplyStyle_clicked')
     def applyPresetStyle(self):
@@ -174,7 +193,7 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
 
     @pyqtSlot(QAbstractButton, name='on_button_box_clicked')
     def applyNewPlacemark(self, button):
-        if self.button_box.buttonRole(button) == QDialogButtonBox.ApplyRole:
+        if self.button_box.buttonRole(button) == QDialogButtonBox.ButtonRole.ApplyRole:
             if self.pos and self.lineEditName.text():
                 res = self.placeMarkLayer.addPlaceMark(self.geoPos,
                                                  self.lineEditName.text(),
@@ -184,11 +203,11 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
                 if res:
                     self.placeMarkLayer.layer.triggerRepaint()
                 self.mapTool.reset()
-                self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
+                self.button_box.button(QDialogButtonBox.StandardButton.Apply).setEnabled(False)
             if self.layerChanged and self.placeMarkLayer.layer:
                 settings = QSettings()
                 settings.setValue(u'PlaceMarker/LayerId', self.placeMarkLayer.layer.id())
-        elif self.button_box.buttonRole(button) == QDialogButtonBox.RejectRole:
+        elif self.button_box.buttonRole(button) == QDialogButtonBox.ButtonRole.RejectRole:
             self.mapTool.reset()
 
     def exceptLayers(self):
@@ -265,45 +284,48 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
             self.geoPos = QgsPointXY(lon, lat)
             self.pos = self.crsXform.transform(self.geoPos, QgsCoordinateTransform.ReverseTransform)
             self.mapTool.setMarkerPosition(self.pos)
-            self.button_box.button(QDialogButtonBox.Apply).setEnabled(True)
+            self.button_box.button(QDialogButtonBox.StandardButton.Apply).setEnabled(True)
         else:
             self.bar.pushMessage(self.tr("Position"), self.tr("Invalid coordinate format"),
                                 level=Qgis.Warning, duration=2)
-            self.button_box.button(QDialogButtonBox.Apply).setEnabled(False)
+            self.button_box.button(QDialogButtonBox.StandardButton.Apply).setEnabled(False)
             self.mapTool.reset()
 
     def decimalStringToDoubles(self, sYX):
         x = 0.0
         y = 0.0
-        ok = not self.reDec2.indexIn(sYX)
-        if not ok:
-            return (y, x, ok)
+        match = self.reDec2.match(sYX)
+    
+        # ok = not self.reDec2.indexIn(sYX)
+        # if not ok:
+        if not match.hasMatch():
+            return (y, x, False)
 
         try:
-            y = float(self.reDec2.cap(1).replace(',', '.'))
-            x = float(self.reDec2.cap(2).replace(',', '.'))
+            y = float(match.captured(1).replace(',', '.'))
+            x = float(match.captured(2).replace(',', '.'))
         except ValueError:
             return (y, x, False)
         if not -90.0 < y <= 90.0 or not -180.0 < x <= 180.0:
             return (y, x, False)
-        return (y, x, ok)
+        return (y, x, True)
 
     def dmsStringToDouble(self, sX, extend=90.0):
         x = 0.0
-        ok = not self.reDms.indexIn(sX)
-        if not ok:
-            return (x, ok)
+        match = self.reDms.match(sX)
+        if not match.hasMatch():
+            return (x, False)
 
         try:
-            dms1 = self.reDms.cap(2)
-            dms2 = self.reDms.cap(3)
-            dms3 = self.reDms.cap(4)
+            dms1 = match.captured(2)
+            dms2 = match.captured(3)
+            dms3 = match.captured(4)
             x = float(dms3)
             if dms2:
                 x = int(dms2) + x / 60.0
             x = int(dms1) + x / 60.0
-            sign1 = self.reDms.cap(1)
-            sign2 = self.reDms.cap(5)
+            sign1 = match.captured(1)
+            sign2 = match.captured(5)
             if not sign1:
                 if sign2 and sign2 in self.negative:
                     x = -x
@@ -311,10 +333,10 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
                 if sign1 and sign1 in self.negative:
                     x = -x
             else:
-                ok = False
+                return (x, False)
         except ValueError:
             return (0.0, False)
 
         if not -extend < x <= extend:
             return (x, False)
-        return (x, ok)
+        return (x, True)

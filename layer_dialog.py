@@ -22,16 +22,14 @@
 """
 
 import os
-
+import psycopg2
+from sqlite3 import OperationalError
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSlot, QSettings, QFileInfo, QVariant
 from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox, QFileDialog, QSizePolicy
-from qgis.core import Qgis, QgsDataSourceUri, QgsVectorLayer, QgsProject, QgsField
+from qgis.core import Qgis, QgsDataSourceUri, QgsVectorLayer, QgsProject, QgsCredentials
 from qgis.utils import spatialite_connect
 from qgis.gui import QgsMessageBar
-from sqlite3 import OperationalError
-import psycopg2
-from qgis._core import QgsCredentials
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'layer_dialog_base.ui'))
@@ -50,7 +48,7 @@ class LayerDialog(QDialog, FORM_CLASS):
         super(LayerDialog, self).__init__(parent)
         self.setupUi(self)
         self.bar = QgsMessageBar(self)
-        self.bar.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+        self.bar.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         self.layout().addWidget(self.bar)
         self.iface = iface
         settings = QSettings()
@@ -68,7 +66,7 @@ class LayerDialog(QDialog, FORM_CLASS):
             self.mDatabaseComboBox.addItem(text)
         settings.endGroup()
         self.mDatabaseComboBox.addItem(self.tr("Temporary Scratch Layer"))
-        self.mOkButton = self.buttonBox.button(QDialogButtonBox.Ok)
+        self.mOkButton = self.buttonBox.button(QDialogButtonBox.StandardButton.Ok)
 
     @pyqtSlot(name='on_toolButtonNewDatabase_clicked')
     def newDataBase(self):
