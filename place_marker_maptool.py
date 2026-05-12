@@ -21,8 +21,8 @@
  ***************************************************************************/
 """
 
-from qgis.gui import QgsMapToolEmitPoint, QgsVertexMarker
 from qgis.PyQt.QtCore import Qt
+from qgis.gui import QgsMapToolEmitPoint, QgsVertexMarker
 
 
 class PlaceMarkerMapTool(QgsMapToolEmitPoint):

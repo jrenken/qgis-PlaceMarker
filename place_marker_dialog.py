@@ -108,8 +108,8 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         self.repaintTimer.timeout.connect(self.repaintTrigger)
         self.layerfeatureCount = dict()
         tr = QObject()
-        self.negative = tr.tr('S') + tr.tr('W') + '-'
         self.hemis = tr.tr('N') + tr.tr('S') + tr.tr('E') + tr.tr('W')
+        self.negative = f'{self.hemis[1]}{self.hemis[3]}-'
         self.reDms = re.compile(r'^\s*(?:([-+{0}])\s*)?(\d{{1,3}})(?:[^0-9.]+([0-5]?\d))?[^0-9.]+([0-5]?\d(?:[\.,]\d+)?)[^0-9.{0}]*([{0}])?\s*$'
                              .format(self.hemis))
         self.reDec2 = re.compile(r'([+-]?\d+\.?\d*)°?([{0}])?[\.\,\s]+([+-]?\d+\.?\d*)°?([{1}])?'.format(self.hemis[:2], self.hemis[2:]))

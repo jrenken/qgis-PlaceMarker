@@ -11,7 +11,7 @@ name=Place Marker
 qgisMinimumVersion=4.0
 qgisMaximumVersion=4.99
 description=Place Marker provides a convenient way of adding placemarks to a vector layer.
-version=1.3.0
+version=2.0.0rc1
 author=Jens Renken (Marum, University of Bremen)
 email=renken@marum.de
 
@@ -30,8 +30,11 @@ repository=https://github.com/jrenken/qgis-PlaceMarker
 
 # Uncomment the following line and add your changelog:
 
-changelog=1.3.0 (2023-07-20)
-    - possibility to create a temporary scratch layer with the required fields
+changelog=2.0.0rc1 (2026-05-12)
+    - migrate to QGIS4 and PyQt6
+    - change coordinate parsing to python native regular expressions (re)
+  1.3.0 (2023-07-20)
+    - capability to add a temporary scratch layer with the required fields
     - minimal lesser requirements and better handling for foreign or non database layers
     - replace coordinate text on drop action, add with shift key pressed
     - bug fixes

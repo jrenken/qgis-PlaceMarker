@@ -25,9 +25,14 @@ import os
 import psycopg2
 from sqlite3 import OperationalError
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import pyqtSlot, QSettings, QFileInfo, QVariant
+from qgis.PyQt.QtCore import pyqtSlot, QSettings, QFileInfo
 from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox, QFileDialog, QSizePolicy
-from qgis.core import Qgis, QgsDataSourceUri, QgsVectorLayer, QgsProject, QgsCredentials
+from qgis.core import (
+    Qgis,
+    QgsDataSourceUri,
+    QgsVectorLayer,
+    QgsProject,
+    QgsCredentials)
 from qgis.utils import spatialite_connect
 from qgis.gui import QgsMessageBar
 

@@ -7,7 +7,7 @@
                              -------------------
         begin                : 2022-10-13
         git sha              : $Format:%H$
-        copyright            : (C) 2022 by Jens Renken (Marum/University of Bremen)
+        copyright            : (C) 2022,2026 by Jens Renken (Marum/University of Bremen)
         email                : renken@marum.de
  ***************************************************************************/
 
