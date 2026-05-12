@@ -23,7 +23,6 @@
 
 import os
 import re
-from qgis.PyQt import QtGui, QtWidgets
 from qgis.gui import QgsMapTool, QgsMessageBar
 from qgis.PyQt.QtCore import (
     Qt,
@@ -33,8 +32,7 @@ from qgis.PyQt.QtCore import (
     QByteArray,
     QSettings,
     QTimer,
-    QModelIndex,
-    QRegularExpression,)
+    QModelIndex,)
 from qgis.core import (
     Qgis,
     QgsPointXY,
@@ -111,10 +109,10 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         self.layerfeatureCount = dict()
         tr = QObject()
         self.negative = tr.tr('S') + tr.tr('W') + '-'
-        hemis = tr.tr('N') + tr.tr('S') + tr.tr('E') + tr.tr('W')
-        self.reDms = QRegularExpression('^\\s*(?:([-+{0}])\\s*)?(\\d{{1,3}})(?:[^0-9.]+([0-5]?\\d))?[^0-9.]+([0-5]?\\d(?:[\\.,]\\d+)?)[^0-9.]*([-+{0}])?\\s*$'
-                             .format(hemis), QRegularExpression.PatternOption.CaseInsensitiveOption)
-        self.reDec2 = QRegularExpression('([+-]?\\d+\\.?\\d*)\\D*[\\.,\\s]+([+-]?\\d+\\.?\\d*)\\D*')
+        self.hemis = tr.tr('N') + tr.tr('S') + tr.tr('E') + tr.tr('W')
+        self.reDms = re.compile(r'^\s*(?:([-+{0}])\s*)?(\d{{1,3}})(?:[^0-9.]+([0-5]?\d))?[^0-9.]+([0-5]?\d(?:[\.,]\d+)?)[^0-9.{0}]*([{0}])?\s*$'
+                             .format(self.hemis))
+        self.reDec2 = re.compile(r'([+-]?\d+\.?\d*)°?([{0}])?[\.\,\s]+([+-]?\d+\.?\d*)°?([{1}])?'.format(self.hemis[:2], self.hemis[2:]))
         self.coordFmt = (cf.FormatDegreesMinutes, cf.FlagDegreesUseStringSuffix)
         try:
             self.sep = cf.separator() + ' '
@@ -295,17 +293,23 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         x = 0.0
         y = 0.0
         match = self.reDec2.match(sYX)
-    
         # ok = not self.reDec2.indexIn(sYX)
         # if not ok:
-        if not match.hasMatch():
+        if not match or (match.lastindex < 3):
             return (y, x, False)
 
         try:
-            y = float(match.captured(1).replace(',', '.'))
-            x = float(match.captured(2).replace(',', '.'))
+            y = float(match[1])
+            x = float(match[3])
         except ValueError:
             return (y, x, False)
+        try:
+            if match[2] == self.hemis[1]:
+                y = -y
+            if match[4] == self.hemis[3]:
+                x = -x
+        except IndexError:
+            pass
         if not -90.0 < y <= 90.0 or not -180.0 < x <= 180.0:
             return (y, x, False)
         return (y, x, True)
@@ -313,19 +317,18 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
     def dmsStringToDouble(self, sX, extend=90.0):
         x = 0.0
         match = self.reDms.match(sX)
-        if not match.hasMatch():
+        if not match:
             return (x, False)
-
         try:
-            dms1 = match.captured(2)
-            dms2 = match.captured(3)
-            dms3 = match.captured(4)
+            dms1 = match[2]
+            dms2 = match[3]
+            dms3 = match[4]
             x = float(dms3)
             if dms2:
                 x = int(dms2) + x / 60.0
             x = int(dms1) + x / 60.0
-            sign1 = match.captured(1)
-            sign2 = match.captured(5)
+            sign1 = match[1]
+            sign2 = match[5]
             if not sign1:
                 if sign2 and sign2 in self.negative:
                     x = -x
@@ -334,7 +337,7 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
                     x = -x
             else:
                 return (x, False)
-        except ValueError:
+        except (ValueError, IndexError):
             return (0.0, False)
 
         if not -extend < x <= extend:
