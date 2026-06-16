@@ -4,22 +4,22 @@
 <context>
     <name>@default</name>
     <message>
-        <location filename="../place_marker_dialog.py" line="95"/>
+        <location filename="../place_marker_dialog.py" line="114"/>
         <source>S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../place_marker_dialog.py" line="95"/>
+        <location filename="../place_marker_dialog.py" line="114"/>
         <source>W</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../place_marker_dialog.py" line="95"/>
+        <location filename="../place_marker_dialog.py" line="114"/>
         <source>N</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../place_marker_dialog.py" line="95"/>
+        <location filename="../place_marker_dialog.py" line="114"/>
         <source>E</source>
         <translation>O</translation>
     </message>
@@ -60,62 +60,62 @@
 <context>
     <name>LayerDialog</name>
     <message>
-        <location filename="../layer_dialog.py" line="75"/>
+        <location filename="../layer_dialog.py" line="80"/>
         <source>New SpatiaLite Database File</source>
         <translation>Neue Spatialite Datenbank Datei</translation>
     </message>
     <message>
-        <location filename="../layer_dialog.py" line="75"/>
+        <location filename="../layer_dialog.py" line="80"/>
         <source>SpatiaLite</source>
         <translation>SpatiaLite</translation>
     </message>
     <message>
-        <location filename="../layer_dialog.py" line="118"/>
+        <location filename="../layer_dialog.py" line="124"/>
         <source>@</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../layer_dialog.py" line="188"/>
+        <location filename="../layer_dialog.py" line="194"/>
         <source>SpatiaLite Database</source>
         <translation>SpatiaLite Datenbank</translation>
     </message>
     <message>
-        <location filename="../layer_dialog.py" line="120"/>
+        <location filename="../layer_dialog.py" line="126"/>
         <source>Registered new database!</source>
         <translation>Neue Datenbank registriert!</translation>
     </message>
     <message>
-        <location filename="../layer_dialog.py" line="226"/>
+        <location filename="../layer_dialog.py" line="232"/>
         <source>Need a layer name</source>
         <translation>Layer Name wird benötigt</translation>
     </message>
     <message>
-        <location filename="../layer_dialog.py" line="97"/>
+        <location filename="../layer_dialog.py" line="103"/>
         <source>Unable to create database file!</source>
         <translation>Datenbank konnte nicht erzeugt werden!</translation>
     </message>
     <message>
-        <location filename="../layer_dialog.py" line="104"/>
+        <location filename="../layer_dialog.py" line="110"/>
         <source>SQLITE Load_extension off!</source>
         <translation>SQLITE Load_extension off!</translation>
     </message>
     <message>
-        <location filename="../layer_dialog.py" line="188"/>
+        <location filename="../layer_dialog.py" line="194"/>
         <source>Could not create a new layer!</source>
         <translation>Neuer Layer konnte nicht angelegt werden!</translation>
     </message>
     <message>
-        <location filename="../layer_dialog.py" line="161"/>
+        <location filename="../layer_dialog.py" line="167"/>
         <source>PostGIS Database</source>
         <translation>PostGIS Datenbank</translation>
     </message>
     <message>
-        <location filename="../layer_dialog.py" line="226"/>
+        <location filename="../layer_dialog.py" line="232"/>
         <source>Database</source>
         <translation>Datenbank</translation>
     </message>
     <message>
-        <location filename="../layer_dialog.py" line="70"/>
+        <location filename="../layer_dialog.py" line="75"/>
         <source>Temporary Scratch Layer</source>
         <translation>Temporärlayer</translation>
     </message>
@@ -136,17 +136,17 @@
 <context>
     <name>PlaceMarkerDialog</name>
     <message>
-        <location filename="../place_marker_dialog.py" line="72"/>
+        <location filename="../place_marker_dialog.py" line="91"/>
         <source>Remove current class</source>
         <translation>Entferne Klasse</translation>
     </message>
     <message>
-        <location filename="../place_marker_dialog.py" line="270"/>
+        <location filename="../place_marker_dialog.py" line="291"/>
         <source>Position</source>
         <translation>Position</translation>
     </message>
     <message>
-        <location filename="../place_marker_dialog.py" line="270"/>
+        <location filename="../place_marker_dialog.py" line="291"/>
         <source>Invalid coordinate format</source>
         <translation>Ungültiges Koordinatenformat</translation>
     </message>

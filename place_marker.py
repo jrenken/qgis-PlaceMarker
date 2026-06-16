@@ -22,6 +22,7 @@
 """
 
 import os.path
+
 from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from qgis.PyQt.QtWidgets import QAction
 from qgis.PyQt.QtGui import QIcon
@@ -31,7 +32,7 @@ from .resources_rc import *
 from .place_marker_dialog import PlaceMarkerDialog
 
 
-class PlaceMarker(object):
+class PlaceMarker():
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):

@@ -21,16 +21,16 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt.QtWidgets import QLineEdit
 from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QLineEdit
 
 
 class DropLineEdit(QLineEdit):
-    '''
+    """
     QLineEdit that overwrites the current content when dropping with shift pressed
-    '''
+    """
 
     def dropEvent(self, e):
         if not e.modifiers() & Qt.KeyboardModifier.ShiftModifier:
             self.clear()
-        super(DropLineEdit, self).dropEvent(e)
+        super().dropEvent(e)

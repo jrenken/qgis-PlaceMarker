@@ -22,8 +22,10 @@
 """
 
 import os
-import psycopg2
 from sqlite3 import OperationalError
+
+import psycopg2
+
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSlot, QSettings, QFileInfo
 from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox, QFileDialog, QSizePolicy
@@ -33,24 +35,24 @@ from qgis.core import (
     QgsVectorLayer,
     QgsProject,
     QgsCredentials)
-from qgis.utils import spatialite_connect
 from qgis.gui import QgsMessageBar
+from qgis.utils import spatialite_connect
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'layer_dialog_base.ui'))
 
 
 class LayerDialog(QDialog, FORM_CLASS):
-    '''
+    """
     Dialogue for creating a new spatialite vector layer.
     If needed a new database file can also be created.
-    '''
+    """
 
     def __init__(self, iface, parent=None):
         '''
         Constructor
         '''
-        super(LayerDialog, self).__init__(parent)
+        super().__init__(parent)
         self.setupUi(self)
         self.bar = QgsMessageBar(self)
         self.bar.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
@@ -66,7 +68,7 @@ class LayerDialog(QDialog, FORM_CLASS):
         settings.beginGroup('PostgreSQL/connections')
         for k in settings.childGroups():
             text = 'postgres://{}@{}'.format(settings.value(k + '/database', '###unknown###'),
-                                               settings.value(k + '/host', '###unknown###'))
+                                             settings.value(k + '/host', '###unknown###'))
 
             self.mDatabaseComboBox.addItem(text)
         settings.endGroup()
@@ -75,8 +77,8 @@ class LayerDialog(QDialog, FORM_CLASS):
 
     @pyqtSlot(name='on_toolButtonNewDatabase_clicked')
     def newDataBase(self):
-        fileName, __ = QFileDialog.getSaveFileName(self, self.tr('New SpatiaLite Database File'), '.',
-                                               self.tr('SpatiaLite') + '(*.sqlite *.db)')
+        fileName, _ = QFileDialog.getSaveFileName(self, self.tr('New SpatiaLite Database File'), '.',
+                                                   self.tr('SpatiaLite') + '(*.sqlite *.db)')
         if not fileName:
             return
 
@@ -88,11 +90,12 @@ class LayerDialog(QDialog, FORM_CLASS):
             self.mDatabaseComboBox.setCurrentIndex(0)
 
     def createDb(self, fileName):
-        '''Create a new spatialite database file
+        """"
+        Create a new spatialite database file
         :param fileName: the filename of the database file
         :returns: True if the file could be created
         :rtype: bool
-        '''
+        """
         try:
             db = spatialite_connect(fileName)
             cur = db.cursor()
@@ -109,7 +112,7 @@ class LayerDialog(QDialog, FORM_CLASS):
 
         cur.execute("Select initspatialmetadata(1);")
         db.commit()
-        db.close
+        db.close()
         fi = QFileInfo(fileName)
         if not fi.exists():
             return False
@@ -125,10 +128,10 @@ class LayerDialog(QDialog, FORM_CLASS):
         return True
 
     def createLayer(self):
-        '''
+        """
         Create a layer with the required attributes and add the layer to the canvas.
         The database is taken from database combobox. The database needs to be registered.
-        '''
+        """
 
         sqlGeom = u'select AddGeometryColumn(%s,%s,%d,%s,2)' % (self.quotedValue(self.leLayerName.text()),
                                                                 self.quotedValue('Geometry'),
@@ -162,7 +165,7 @@ class LayerDialog(QDialog, FORM_CLASS):
                     raise psycopg2.InterfaceError
             except (psycopg2.OperationalError, psycopg2.InterfaceError):
                 self.iface.messageBar().pushMessage(self.tr("PostGIS Database"), self.tr("Could not create a new layer!"),
-                                     level=Qgis.Critical, duration=5)
+                                                    level=Qgis.Critical, duration=5)
                 return
 
             uri.setConnection(aHost=dbn[1], aPort='5432', aDatabase=dbn[0], aUsername=usr, aPassword=pw)
@@ -189,7 +192,7 @@ class LayerDialog(QDialog, FORM_CLASS):
                 db.close()
             except OperationalError:
                 self.iface.messageBar().pushMessage(self.tr("SpatiaLite Database"), self.tr("Could not create a new layer!"),
-                                     level=Qgis.Critical, duration=5)
+                                                    level=Qgis.Critical, duration=5)
                 return
 
             uri.setDatabase(self.mDatabaseComboBox.currentText())
@@ -201,10 +204,10 @@ class LayerDialog(QDialog, FORM_CLASS):
             layer = QgsVectorLayer(uri.uri(), display_name, 'spatialite')
 
         else:
-            uri = 'point?crs=epsg:4326&field=name:string' \
-                    '&field=description:string' \
-                    '&field=class:string' \
-                    '&field=timestamp:string'
+            uri = ('point?crs=epsg:4326&field=name:string'
+                   '&field=description:string'
+                   '&field=class:string'
+                   '&field=timestamp:string')
             layer = QgsVectorLayer(uri, self.leLayerName.text(), 'memory')
 
         if layer.isValid():

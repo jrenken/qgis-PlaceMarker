@@ -20,15 +20,14 @@
  *                                                                         *
  ***************************************************************************/
 """
-from builtins import object
 from qgis.PyQt.QtCore import QVariant
 from qgis.core import QgsVectorDataProvider, QgsFields, QgsField, QgsGeometry, QgsFeature
 
 
-class PlaceMarkLayer(object):
-    '''
+class PlaceMarkLayer():
+    """
     classdocs
-    '''
+    """
 
     REQUIRED_FIELDS = [['name', QVariant.String],
                        ['description', QVariant.String],
@@ -36,18 +35,18 @@ class PlaceMarkLayer(object):
                        ['timestamp', QVariant.String]]
 
     def __init__(self, layer=None):
-        '''
+        """
         Constructor
 
         :param layer: vector layer where to add the placemarks
         :type layer: QgsVectorLayer
-        '''
+        """
         self.setLayer(layer)
 
     def setLayer(self, layer):
-        ''' assign a layer. Before check if the requirements are fullfilled
+        """ assign a layer. Before check if the requirements are fullfilled
         :param layer: a vector layer
-        '''
+        """
         self.layer = None
         self.hasLayer = False
         layerOk = self.checkLayer(layer)
@@ -60,7 +59,7 @@ class PlaceMarkLayer(object):
             self.hasLayer = True
 
     def addPlaceMark(self, pos, name, description, category, timestamp):
-        ''' adds a point to the layer
+        """ adds a point to the layer
 
         :param pos: lat/lon position of the placemark
         :type pos: QgsPointXY
@@ -76,7 +75,7 @@ class PlaceMarkLayer(object):
 
         :param timestamp: creation time of the placemark
         :type timestamp: string
-        '''
+        """
         if self.hasLayer:
             feat = QgsFeature(self.layer.fields())
             feat.initAttributes(self.attributeCount)
@@ -101,11 +100,11 @@ class PlaceMarkLayer(object):
         return res
 
     def checkLayer(self, layer):
-        ''' Check if the layer geometry is point and if the
+        """ Check if the layer geometry is point and if the
             required attributes are available or can be added
         :param layer: vector layer where to add the placemarks
         :type layer: QgsVectorLayer
-        '''
+        """
         if layer is None:
             return False
         missingFields = []

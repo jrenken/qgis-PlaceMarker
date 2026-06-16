@@ -35,7 +35,7 @@ class PlaceMarkerMapTool(QgsMapToolEmitPoint):
         Constructor
         '''
         self.canvas = canvas
-        super(PlaceMarkerMapTool, self).__init__(self.canvas)
+        super().__init__(self.canvas)
         self.marker = QgsVertexMarker(self.canvas)
         self.marker.setColor(Qt.GlobalColor.red)
         self.marker.setIconSize(8)

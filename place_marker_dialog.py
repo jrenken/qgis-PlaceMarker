@@ -23,6 +23,7 @@
 
 import os
 import re
+
 from qgis.gui import QgsMapTool, QgsMessageBar
 from qgis.PyQt.QtCore import (
     Qt,
@@ -48,6 +49,7 @@ from qgis.PyQt.QtWidgets import (
     QAction,
     QSizePolicy)
 from qgis.PyQt.QtGui import QKeySequence
+
 from .layer_dialog import LayerDialog
 from .placemark_layer import PlaceMarkLayer
 from .ui_place_marker_dialog_base import Ui_PlaceMarkerDialogBase
@@ -81,7 +83,7 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         try:
             self.restoreGeometry(settings.value(u'/Windows/PlaceMarker/geometry', QByteArray(), type=QByteArray))
             classes = settings.value(u'PlaceMarker/Classes',
-                                 defaultValue=self.DEFAULT_CLASSES, type=str)
+                                     defaultValue=self.DEFAULT_CLASSES, type=str)
             self.comboBoxClass.addItems(classes)
         except TypeError:
             self.comboBoxClass.addItems(self.DEFAULT_CLASSES)
@@ -101,17 +103,18 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         self.iface.mapCanvas().destinationCrsChanged.connect(self.changeCrs)
         self.iface.mapCanvas().mapToolSet[QgsMapTool, QgsMapTool].connect(self.mapToolChanged)
         self.pos = None
+        self.geoPos = None
         self.layerId = None
         self.layerChanged = False
         self.mMapLayerComboBox.layerChanged.connect(self.changeLayer)
         self.repaintTimer = QTimer()
         self.repaintTimer.timeout.connect(self.repaintTrigger)
-        self.layerfeatureCount = dict()
+        self.layerfeatureCount = {}
         tr = QObject()
         self.hemis = tr.tr('N') + tr.tr('S') + tr.tr('E') + tr.tr('W')
         self.negative = f'{self.hemis[1]}{self.hemis[3]}-'
         self.reDms = re.compile(r'^\s*(?:([-+{0}])\s*)?(\d{{1,3}})(?:[^0-9.]+([0-5]?\d))?[^0-9.]+([0-5]?\d(?:[\.,]\d+)?)[^0-9.{0}]*([{0}])?\s*$'
-                             .format(self.hemis))
+                                .format(self.hemis))
         self.reDec2 = re.compile(r'([+-]?\d+\.?\d*)°?([{0}])?[\.\,\s]+([+-]?\d+\.?\d*)°?([{1}])?'.format(self.hemis[:2], self.hemis[2:]))
         self.coordFmt = (cf.FormatDegreesMinutes, cf.FlagDegreesUseStringSuffix)
         try:
@@ -163,9 +166,9 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
 
     @pyqtSlot()
     def changeCrs(self):
-        '''
+        """
         SLot called when the mapcanvas CRS is changed
-        '''
+        """
         crsSrc = self.iface.mapCanvas().mapSettings().destinationCrs()
         self.crsXform.setSourceCrs(crsSrc)
 
@@ -194,10 +197,11 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         if self.button_box.buttonRole(button) == QDialogButtonBox.ButtonRole.ApplyRole:
             if self.pos and self.lineEditName.text():
                 res = self.placeMarkLayer.addPlaceMark(self.geoPos,
-                                                 self.lineEditName.text(),
-                                                 self.lineEditDescription.text(),
-                                                 self.comboBoxClass.currentText(),
-                                                 self.mDateTimeEdit.dateTime().toString(self.mDateTimeEdit.displayFormat()))
+                                                       self.lineEditName.text(),
+                                                       self.lineEditDescription.text(),
+                                                       self.comboBoxClass.currentText(),
+                                                       self.mDateTimeEdit.dateTime().toString(
+                                                           self.mDateTimeEdit.displayFormat()))
                 if res:
                     self.placeMarkLayer.layer.triggerRepaint()
                 self.mapTool.reset()
@@ -244,7 +248,7 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
         self.iface.openURL(url, False)
 
     @pyqtSlot(QModelIndex, int, int)
-    def classChanged(self, idx, start, end):
+    def classChanged(self, _, __, ___):
         settings = QSettings()
         sl = []
         for i in range(self.comboBoxClass.count()):
@@ -258,7 +262,7 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
             if i > -1:
                 self.comboBoxClass.removeItem(i)
 
-    def updateLayerList(self, layers):
+    def updateLayerList(self, _):
         self.exceptLayers()
 
     @pyqtSlot(name='on_lineEditPosition_editingFinished')
@@ -285,7 +289,7 @@ class PlaceMarkerDialog(QDialog, Ui_PlaceMarkerDialogBase):
             self.button_box.button(QDialogButtonBox.StandardButton.Apply).setEnabled(True)
         else:
             self.bar.pushMessage(self.tr("Position"), self.tr("Invalid coordinate format"),
-                                level=Qgis.Warning, duration=2)
+                                 level=Qgis.Warning, duration=2)
             self.button_box.button(QDialogButtonBox.StandardButton.Apply).setEnabled(False)
             self.mapTool.reset()
 
