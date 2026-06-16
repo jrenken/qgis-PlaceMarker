@@ -30,7 +30,7 @@ repository=https://github.com/jrenken/qgis-PlaceMarker
 
 # Uncomment the following line and add your changelog:
 
-changelog=2.0.0 (2026-05-12)
+changelog=2.0.0 (2026-06-16)
     - migrate to QGIS4 and PyQt6
     - change coordinate parsing to python native regular expressions (re)
     - minor fixes and improvements

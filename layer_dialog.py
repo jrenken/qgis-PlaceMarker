@@ -78,7 +78,7 @@ class LayerDialog(QDialog, FORM_CLASS):
     @pyqtSlot(name='on_toolButtonNewDatabase_clicked')
     def newDataBase(self):
         fileName, _ = QFileDialog.getSaveFileName(self, self.tr('New SpatiaLite Database File'), '.',
-                                                   self.tr('SpatiaLite') + '(*.sqlite *.db)')
+                                                  self.tr('SpatiaLite') + '(*.sqlite *.db)')
         if not fileName:
             return
 

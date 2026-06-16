@@ -54,7 +54,7 @@ UI_FILES = layer_dialog_base.ui place_marker_dialog_base.ui
 
 COMPILED_UI_FILES = ui_place_marker_dialog_base.py
 
-EXTRAS = metadata.txt icon.png
+EXTRAS = metadata.txt icon.png LICENSE
 
 COMPILED_RESOURCE_FILES = resources_rc.py
 
